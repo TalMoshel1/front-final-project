@@ -1,62 +1,35 @@
 import React, { useEffect, useState  } from 'react';
 import './Home.css';
 import { Link, Outlet, useLocation, useNavigate  } from "react-router-dom";
-import { Navbar } from '../lib/components/Navbar'
+import  Navbar  from '../lib/components/elements/Navbar'
 import { UserContext } from '..';
+import UserProvider from '../store/context/UserContext';
+import {Header} from '../lib/components/elements/Header'
 
 
-function App() {
+function Home() {
 
   const userInfoUrl = 'http://localhost:3000/api/user-info'
-  // const realServerUrl = 'https://instegram.onrender.com/'
-  // const [serverText, setServerText] = useState('no text yet')
-  const [userInfo, setUserInfo] = useState({username:''})
-  const [finishedLoading, setFinishedLoading] = useState(false)
-  const navigate = useNavigate() // redirect to other components
-  const location = useLocation() // react router hook
 
-  useEffect(()=>{
-    fetch(userInfoUrl, {credentials: 'include'}).then(async res=>{
-      if(res.status!==200){
-        navigate('/login')
-        
-        return
-      }
-      const data = await res.json()
-      debugger
-      setUserInfo(data)
-      navigate('/feed')
-    }).catch(err=>{
-      navigate('/login')
-    }).finally(()=>{
-      setFinishedLoading(true)
-    })
-  },[])
-
-  useEffect(()=>{
-    if (finishedLoading && !userInfo && location.pathname !== '/login') {
-      navigate('/login')
-    }
-  },[location])
 
 
   return <div style={{ backgroundColor:'#FAFAFA', height: '100vh'}}>
     {/* <Navbar/> */}
-    <UserContext.Provider value={userInfo}>
-    <nav>
+    <UserProvider>
+    <Header/>
+    {/* <nav>
       <ul>
         <li><Link to={'/register'}>Registration</Link></li>
         <li><Link to={'/login'}>Login</Link></li>
         <li><Link to={'/feed'}>Feed</Link></li>
         <li><Link to={'/user/:username'}>User</Link></li>
       </ul>
-    </nav>
+    </nav> */}
   
     <Outlet></Outlet>
-    </UserContext.Provider>
-
+    </UserProvider>
 
   </div>;
 }
 
-export default App;
+export default Home;
