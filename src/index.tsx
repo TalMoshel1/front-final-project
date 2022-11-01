@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './pages/Home';
+import Home from './pages/Home';
 import reportWebVitals from './reportWebVitals';
 import { Route, Routes, HashRouter } from "react-router-dom";
 import { Feed } from './pages/Feed';
@@ -22,7 +22,7 @@ root.render(
   <React.StrictMode>
     <HashRouter>
       <Routes>
-        <Route path='/' element={<App></App>}>
+        <Route path='/' element={<Home></Home>}>
           <Route path='register' element={<Registration></Registration>}></Route>
           <Route path='login' element={<Login></Login>}></Route>
           <Route path='feed' element={<Feed></Feed>}></Route>
