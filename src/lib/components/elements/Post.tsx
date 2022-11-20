@@ -2,93 +2,179 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { List } from '../List'
 import { ReactNode } from 'react'
-import {Image} from '../Image'
+import Image from '../Image'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ShareIcon from '@mui/icons-material/Share';
-
-
+import { serverUrl } from '../../../utils/FileServerIUrl'
+import styled, { StyledComponent } from 'styled-components'
+import Like from '../../components/elements/Like'
+import Comment from '../../components/elements/Comment'
 
 async function getJSON(url: string) {
   const res = await fetch(url);
   return res.json();
 }
 
-
-export default function Post({ post, setUserClicked }: { post?: any,  setUserClicked: (userClicked: string) => void } ) {
+function Post({ post, setUserClicked, postContext, setPostClicked, className, sizeModal, toggle }: { post?: any, postContext: 'feed' | 'user', setUserClicked?: (userClicked: string) => void, setPostClicked?: (postClicked: boolean) => void, className: string, sizeModal?: boolean, toggle?: () => void  }) {
   const [numLikes, addLike] = useState(0);
-  const [dynamicPost, setDynamicPost] = useState({ title: '', id: '' });
   const params = useParams();
   const navigate = useNavigate()
   const fileServerUrl = 'http://localhost:3000'
 
-
-  useEffect(() => {
-    async function setDynamicData() {
-      console.log('setDynamicData works')
-      await setDynamicPost(await getJSON(`./data/post.${params.postId}.json`))
-      console.log('try to fetch unseccessfully')
-    }
-    if (!post) {
-      setDynamicData();
-    }
-    console.log('post is set!')
-  }, [params.postId, post]);
-
   useEffect(()=>{
-    console.log(post)
-  },[])
+  })
 
-  return <div>
-    {post ? <div>
-      <h1 onClick={()=>setUserClicked(post.username)}>{post.username}</h1>
-      <Image post={post}></Image>
-      <h2><Link style={{ color: 'black', textDecoration: 'none' }} to={`/posts/${post?.id}`}>{post?.title || dynamicPost?.title}</Link></h2>
-      <Like onLike={() => addLike(numLikes + 1)}>
-      <FavoriteBorderIcon/>
-      </Like>
-      <ChatBubbleOutlineIcon />
-      <ShareIcon />
-      <p>Num likes {numLikes}</p>
-    </div> :
-      <div><h2 style={{ color: "red" }}>no posts yet</h2></div>}
+  return <div className={className}>
+    {(post && postContext === 'feed') &&
+      <li>
+        {!sizeModal && <Image post={post} className='modal__image'></Image>}
+        <div className={!sizeModal ? 'post__content': ''}>
+          <div className='post__header'>
+            <div className='profilePic__container'>
+              {post.media ?
+                <img className='profile__img' src={`${serverUrl}/${post.media}`} /> :
+                <img className='profile__img' src={`http://localhost:3000/uploads/search-grey-1.png`} />
+              }
+            </div>
+            <div className='h1__container'>
+              <h1><Link to={`/user/${post.author._id}`}>{post.username}</Link></h1>
+            </div>
+          </div>
+          {sizeModal && <div><Image post={post} className='feed'></Image></div>}
+          <div className='icons__container'>
+            <Like onLike={() => addLike(numLikes + 1)}>
+              <FavoriteBorderIcon className='icon' />
+            </Like >
+            <ChatBubbleOutlineIcon className='icon' />
+            <ShareIcon className='icon' />
+          </div>
+          <div className='likesBodyUsername'>
+            <p>Num likes {numLikes}</p>
+            <p><strong>{post.username}</strong> <span>lorem50</span></p>
+          </div>
+          <Comment className='why I have to give className, whats the point?' />
+          </div>
+
+      </li>}
+
+    {(post && postContext === 'user' && setPostClicked) &&
+      <div className='user' onClick={() => { setPostClicked(post) }}>
+        <Image post={post}></Image>
+      </div>}
+
   </div>
 }
 
+export default styled(Post)`
 
+  margin-bottom: 3em;
+  background-color: white;
+  border: 1.5px solid #eeeeee;
+  border-radius: 20px;
+  width: 100%;
 
+  .modal__image {
+    height: 100%;
+  }
 
+  .post__content {
+    overflow: scroll;
+    width: 800px;
 
+  }
 
+    li {
+      display: flex;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-interface IPropsLike {
-  onLike: () => void;
-  children: JSX.Element;
+.user {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 1em;
 }
 
-function Like({ onLike, children }: IPropsLike) {
-  return <button onClick={onLike}>{children}</button>
-}
 
-function PostBox({ children }: { children: JSX.Element[] }) {
-  return <div style={{
-    border: '4px solid black',
-    color: "black",
-    marginBottom: '1em',
-    width: '100%',
-    textAlign: 'center'
-  }}>
-    {children}
-  </div>
-}
+  .post__header {
+    display: flex;
+    flex-direction: row;
+
+  }
+
+  .profilePic__container {
+    padding: 10px
+  }
+
+  .profile__img {
+    height: 60px;
+    width: 60px;
+    border: 1px solid black;
+    border-radius: 40px ;
+  }
+
+  .h1__container {
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+  }
+
+  .icons__container {
+    display: flex;
+    justify-content: start;
+    gap: 0.9em;
+    padding: 10px;
+  }
+
+  .icon {
+    height: 30px;
+  }
+
+  .likesBodyUsername{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    font-size: 1rem;
+  }
+`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// interface IPropsLike {
+//   onLike: () => void;
+//   children: JSX.Element;
+// }
+
+// function Like({ onLike, children }: IPropsLike) {
+//   return <button style={{padding: '0px', borderWidth: '0px', backgroundColor: 'white'}} onClick={onLike}>{children}</button>
+// }
+
+// function PostBox({ children }: { children: JSX.Element[] }) {
+//   return <div style={{
+//     border: '4px solid black',
+//     color: "black",
+//     marginBottom: '1em',
+//     width: '100%',
+//     textAlign: 'center'
+//   }}>
+//     {children}
+//   </div>
+
+// }

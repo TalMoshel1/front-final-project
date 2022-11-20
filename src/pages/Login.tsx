@@ -15,6 +15,7 @@ export function Login() {
     const [error, setError] = useState('')
     const [isShowPassword, setisShowPassword] = useState(false)
     const navigate = useNavigate()
+    console.log('login work')
 
 
     function login() {

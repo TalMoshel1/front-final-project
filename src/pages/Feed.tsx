@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import Post from '../lib/components/elements/Post';
 import { List } from '../lib/components/List'
 import { ListStyle } from '../lib/components/ListStyle';
-import { UserContext } from '..';
 import SuggestionsStyle from '../lib/components/FewSuggestionsStyle'
 import Suggestion from '../lib/components/Suggestion'
 import Flex from '../lib/components/Flex';
@@ -10,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { userInfo } from 'os';
 import styled from 'styled-components'
 import { setDefaultResultOrder } from 'dns';
+import { UserContext } from '../store/context/UserContext';
 
 
 
@@ -32,16 +32,20 @@ export function Feed({ className }: { className?: string }) {
   const [suggestions, setSuggestions] = useState([])
   const [posts, setPosts] = useState<Post[]>([])
   const [usersState, setUsers] = useState<{}[] | []>([])
-  const [page, setCount] = useState(0);
+  const [page, setPage] = useState(0);
   const [userClicked, memoSetUserClicked] = useState('')
   const [loading, setLoading] = useState(false)
   const userInfoContext = useContext(UserContext)
   const navigate = useNavigate()
-  const [test, setTest] = useState(false)
+  const firstLoad = useRef(false)
+  const infinteScrollContainer = useRef<HTMLDivElement>(null)
+  console.log('feed')
+  const cancelPegination = useRef(false)
 
   function loadMore() {
 
   }
+
   useEffect(() => {
     async function setDataSuggestions() {
       fetch('http://localhost:3000/api/suggestions/feed', { credentials: 'include' })
@@ -49,6 +53,7 @@ export function Feed({ className }: { className?: string }) {
           return res.json()
         })
         .then(suggestions => {
+          console.log(suggestions)
           setSuggestions(suggestions)
         })
         .catch(err => {
@@ -58,71 +63,74 @@ export function Feed({ className }: { className?: string }) {
     setDataSuggestions();
   }, [])
 
+
+
   useEffect(() => {
+    const controller = new AbortController()
 
     async function setDataPosts() {
       setLoading(true)
-      fetch(`http://localhost:3000/api/post/feed?offset=${page}`, { credentials: 'include' })
+      firstLoad.current = true
+      fetch(`http://localhost:3000/api/post/feed?offset=${page}`, { credentials: 'include', signal: controller.signal })
         .then(res => {
           return res.json()
         })
         .then((posts) => {
+          if (posts.length < 5) {
+            cancelPegination.current = true
+          }
           setPosts(prevPosts => {
             return [...prevPosts, ...(posts as Post[])]
           })
-        })
-        .then(() => {
-          getUsersOfPosts()
+
         })
         .catch(err => {
-          navigate('/login')
+          console.log(err)
         }).finally(() => {
           setLoading(false)
+          firstLoad.current = false
         })
     }
-
-    async function getUsersOfPosts() {
-      await posts.forEach(async (post) => {
-        fetch(`http://localhost:3000/api/user/${post.author}`, { credentials: 'include' })
-          .then((newUser) => {
-            return newUser.json()
-          })
-          .then((newUser) => {
-            setUsers(prevUser => {
-              return [...prevUser, newUser]
-            })
-          })
-                    /* 
-                console.log('suppose to setTest to true')
-      setTest(true)
-          
-      run it here and usersState will be empty
-          */
-      })
-      console.log('suppose to setTest to true')
-      setTest(true)
-    }
-
     if (!loading) setDataPosts();
+    return () => {
+      if (firstLoad.current) {
+        controller.abort()
+      }
+    }
   }, [page])
 
-
   useEffect(() => {
-    if (test) {
-      console.log(posts)
-      console.log(usersState)
-    } else {
-      console.log('test is false')
-    }
-  })
 
-  return <Style>
-    <Flex>
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && posts.length && !cancelPegination.current) {
+          setPage(p => p + 1)
+        }
+      })
+    }, {
+      root: document.getElementById("feedContainer"),
+      threshold: 1,
+      rootMargin: '50px'
+    })
+
+
+    if (infinteScrollContainer.current) observer.observe(infinteScrollContainer.current)
+    return () => {
+      observer.disconnect()
+    }
+  }, [posts])
+
+
+
+  return <Style id="feedContainer">
+    {posts && suggestions ? <Flex>
       <ListStyle overflow='none'>
         <List direction='column'>{posts.map((post) => {
-          return <Post post={post} setUserClicked={memoSetUserClicked}></Post> // every Post has: _id (unique value of post ID) and author (unique value of USER NAME)
+          return <Post post={post} setUserClicked={memoSetUserClicked} postContext='feed' className='h' sizeModal={true}></Post> // every Post has: _id (unique value of post ID) and author (unique value of USER NAME)
         }
-        )}</List>
+        )}
+        </List>
+        <div ref={infinteScrollContainer} style={{ height: '50px' }}></div>
       </ListStyle>
       <SuggestionsStyle>
         {suggestions.map((sugg, array) => {
@@ -131,18 +139,19 @@ export function Feed({ className }: { className?: string }) {
           }
         })}
       </SuggestionsStyle>
-    </Flex>
+    </Flex> : <div>loading</div>}
+
   </Style>
 }
 
 
 
 const Style = styled.div`
-
-    margin-top: 20px;
-    @media (min-width: 62.5rem) { 
-        margin-right: 10%;
-        margin-left: 10%;
-    }
+    display: flex;
+    height: calc( 100vh - 125px);
+    overflow: scroll;
+    padding-top: 20px; 
+    justify-content: center;
+    
 
 `

@@ -22,6 +22,7 @@
     "react-infinite-scroller": "^1.2.6",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "styled-components": "^5.3.6",
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4"
   },
@@ -50,6 +51,7 @@
     ]
   },
   "devDependencies": {
+    "@types/styled-components": "^5.1.26",
     "netlify-cli": "^11.8.2"
   }
 }

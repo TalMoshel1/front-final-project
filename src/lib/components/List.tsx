@@ -1,52 +1,28 @@
 import React from 'react';
 import Post from './elements/Post';
 import * as CSS from 'csstype'
+import styled from 'styled-components'
+import { ListStyle } from './ListStyle';
 
 type FlexDirection = 'row' | 'column'
-export function List({ children, direction }: { children: any[], direction?: FlexDirection }) {
-    return <div>
-        {direction==='column'? <ul 
-    style={{
-        listStyleType: 'none',
-        display: 'flex',
-        flexDirection: direction,
-        paddingInlineStart: '0px',
-        gap: '1em'
-        
-    }}
-    >
-        {children.map((child, i) => <div style={{
-            border: '1px solid black',
-            textAlign: 'center'
-        }} key={i}>
+
+export function List({ children, direction }: { children: any[], direction: FlexDirection }) {
+    return <Style direction={direction}>
+        {children.map((child, i) =>
+         <div style={{ textAlign: 'center'}} key={i}>
             <li>
                 {child}
             </li>
-
-        </div>)}
-    </ul> :
-    <ul 
-    style={{
-        listStyleType: 'none',
-        display: 'flex',
-        flexDirection: direction,
-        paddingInlineStart: '0px'
-        
-    }}
-    >
-        {children.map((child, i) => <div style={{
-            border: '1px solid black',
-            textAlign: 'center'
-        }} key={i}>
-            <li>
-                {child}
-            </li>
-
-        </div>)}
-    </ul>}
-         
-    </div>
-    
-    
-   
+        </div>)
+        } 
+    </Style>
 }
+
+const Style = styled.ul<{direction: 'row' | 'column'}>`
+        /* display: flex;
+        flex-direction: direction; */
+        background-color: #FAFAFA;
+        list-Style-Type: none;
+        padding-inline-Start: 0px;
+        width: 100%;
+`

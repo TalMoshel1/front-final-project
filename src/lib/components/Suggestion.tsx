@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { ListStyle } from './ListStyle';
+// import React, { useEffect, useState } from 'react';
+import styled from 'styled-components'
+import { serverUrl } from '../../utils/FileServerIUrl'
 
 interface ISugg {
     username: string;
@@ -8,33 +9,46 @@ interface ISugg {
 }
 
 
-const fileServerUrl = 'http://localhost:3000'
+function Suggestion({ sugg, setUserClicked, className }: { sugg: ISugg, setUserClicked: (userClicked: string) => void, className?: string }) {
 
 
-function Suggestion({ sugg, setUserClicked }: { sugg: ISugg, setUserClicked: (userClicked: string) => void }) {
+    return <li className={className}>
+        {sugg.media ? <img src={`${serverUrl}/${sugg.media}`} /> : <img src={`${serverUrl}/uploads/search-grey-1.png`} />}
+        <p>{sugg.username}</p>
+        <div className='buttonContainer'>
+            <button onClick={() => setUserClicked(sugg._id)}>follow</button>
+        </div>
 
-
-    return <div>
-        {sugg.media ?
-            <div style={{ display: 'flex' }}>
-                <img src={`${fileServerUrl}/${sugg.media}`} style={{ borderRadius: '10px', width: '3rem', height: '3rem' }} />
-                <p>{sugg.username}</p>
-                <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
-                    <button style={{ all: 'unset', cursor: 'pointer', color: 'hsl(206, 80%, 58%)' }} onClick={() => setUserClicked(sugg._id)}>follow</button>
-                </div>
-            </div> :
-            <div style={{ display: 'flex' }}>
-                <img src={`${fileServerUrl}/uploads/search-grey-1.png`} style={{ borderRadius: '10px', width: '3rem', height: '3rem' }} />
-                <p>{sugg.username}</p>
-                <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
-                    <button style={{ all: 'unset', cursor: 'pointer', color: 'hsl(206, 80%, 58%)' }} onClick={() => setUserClicked(sugg._id)}>follow</button>
-                </div>
-            </div>}
-
-    </div>
-
-
+    </li>
 }
 
 
-export default Suggestion;
+export default styled(Suggestion)`
+     
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        background-color: #FFFFFF;
+        border-radius: 30px;
+    
+
+    img {
+        border-radius: 10px;
+        width: 3rem;
+        height: 3rem;
+    };
+
+    .buttonContainer { 
+        flex-grow: 1;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    button {
+        all: unset;
+        cursor: pointer;
+        color: hsl(206, 80%, 58%);
+    }
+
+
+`
