@@ -7,22 +7,22 @@ import { ListStyle } from './ListStyle';
 type FlexDirection = 'row' | 'column'
 
 export function List({ children, direction }: { children: any[], direction: FlexDirection }) {
-    return <Style direction={direction}>
+    return <UL direction={direction}>
         {children.map((child, i) =>
-         <div style={{ textAlign: 'center'}} key={i}>
-            <li>
+         <li style={{ textAlign: 'center'}} key={i}>
                 {child}
-            </li>
-        </div>)
+        </li>)
         } 
-    </Style>
+    </UL>
 }
 
-const Style = styled.ul<{direction: 'row' | 'column'}>`
+const UL = styled.ul<{direction: 'row' | 'column'}>`
         /* display: flex;
         flex-direction: direction; */
         background-color: #FAFAFA;
-        list-Style-Type: none;
+        list-style: none;
         padding-inline-Start: 0px;
-        width: 100%;
+        width: calc(100%-40px);
+        max-width: 500px;
+        margin: 0;
 `

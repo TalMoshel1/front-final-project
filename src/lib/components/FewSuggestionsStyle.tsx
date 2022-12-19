@@ -21,6 +21,7 @@ const Ul = styled.ul`
         display: none;
     }
     width: 30%;
+    min-width: 200px;
     height: max-content;
     border: 1.5px solid #eeeeee;
     list-style-type: none;

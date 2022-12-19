@@ -7,21 +7,25 @@ import { serverUrl } from '../utils/FileServerIUrl'
 import { UserContext } from "../store/context/UserContext"
 import Axios from 'axios'
 import PostModal from "../lib/components/elements/PostModal"
+import ProfilePicModal from "../lib/components/elements/ProfilePicModal"
+import { ChangePropsModal } from "../lib/components/elements/changePropsModal"
+import SettingsIcon from '@mui/icons-material/Settings';
+import { UserInterface } from "../interfaces/interfaces"
+import { follow, unFollow } from "../functions/userFunctions"
 
 function User({ user, className }: { user?: {}, className?: string }) {
     const userParams = useParams()
-    const [userInfo, setUserInfo] = useState({ username: '', media: '', following: [] })
+    const [userInfo, setUserInfo] = useState({ username: '', media: '', following: [], _id: '' })
     const [posts, setPosts] = useState([])
     const userInfoContext = useContext(UserContext)
-    const [postClicked, memoSetPostClicked] = useState({username:''})
+    const [postClicked, memoSetPostClicked] = useState({ username: '' })
     const [togglePostModal, setTogglePostModal] = useState(false)
     const [isMe, setIsMe] = useState(false)
     const navigate = useNavigate() // redirect to other components
     const [followedByMe, setFollowedByMe] = useState<boolean>(false)
+    const [profilePicClicked, setProfilePicClicked] = useState(false)
+    const [toggleUpdateModal, setToggleUpdateModal] = useState(false)
 
-    useEffect(()=>{
-        console.log('post clicked')
-    },[postClicked])
 
     useEffect(() => {
         const userId = userParams.id
@@ -31,8 +35,6 @@ function User({ user, className }: { user?: {}, className?: string }) {
                 return res.json()
             })
             .then(async (res) => {
-                console.log('userInfo fetched')
-                console.log(res)
                 setUserInfo(res)
                 return res
             })
@@ -48,6 +50,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
             }).then((res) => {
                 return res.json()
             }).then((res) => {
+                console.log(res)
                 setPosts(res)
             })
             .catch((err) => {
@@ -59,36 +62,37 @@ function User({ user, className }: { user?: {}, className?: string }) {
         return () => {
 
         }
-    }, [])
+    }, [userParams])
 
 
-    function editProfile() {
-        navigate('/accounts/edit')
-    }
-
-    async function follow() {
+    async function toFollow() {
         if (userInfo.username) {
-            Axios.post('http://localhost:3000/api/login', {
-                username: userInfo.username && userInfo.username
-            }, { withCredentials: true })
-            .then(()=>{
-                setFollowedByMe(true)
-            })
+            const updatedUser = await follow(userInfo._id)
+            userInfoContext.updateUser(updatedUser, 'feed')
+            setFollowedByMe(true)
+                
         }
+        return
     }
 
-    async function unFollow() {
+    async function toUnFollow() {
+        if (userInfo.username) {
+            const updatedUser = await unFollow(userInfo._id)
+            userInfoContext.updateUser(updatedUser, 'feed')
+            setFollowedByMe(false)
+        }
         return
     }
 
 
-    useEffect(()=>{
+    useEffect(() => {
         if (postClicked.username) {
-            console.log(postClicked)
-            console.log('post updated', posts)
             return setTogglePostModal(!togglePostModal)
         }
-        console.log('post updated', posts)
+    }, [postClicked])
+
+    useEffect(()=>{
+        console.log(postClicked)
     },[postClicked])
 
 
@@ -97,28 +101,29 @@ function User({ user, className }: { user?: {}, className?: string }) {
 
     return <div className={className}>
         <section className='userDetails'>
-            <div className='usersDetailsChild__profilePic__container'>
+            <div className='usersDetailsChild__profilePic__edit__container'>
                 {userInfo.media ?
-                    <img className='profilePic' src={`${serverUrl}/${userInfo.media}`} /> :
-                    <img className='profilePic' src={`http://localhost:3000/uploads/search-grey-1.png`} />
+                    <img className='profilePic' src={`${serverUrl}/${userInfo.media}`} onClick={() => { setProfilePicClicked(!profilePicClicked); }} /> :
+                    <img className='profilePic' src={`http://localhost:3000/uploads/search-grey-1.png`} onClick={() => { setProfilePicClicked(!profilePicClicked); }} />
                 }
-            </div>
-            <div className=''>
-                <div>
-                    <h1>{userInfo.username}</h1>
-                    {(userInfoContext?.user?.username !== userInfo.username) && (!followedByMe) &&
-                        <input type='submit' value='Follow' onClick={() => { follow() }} />
-                    }
-                    {(userInfoContext?.user?.username !== userInfo.username) && (followedByMe) &&
-                        <input type='submit' value='Unfollow' onClick={() => { unFollow() }} />
-                    }
-                    {(userInfoContext?.user?.username === userInfo.username) &&
-                        <input type='submit' value='Edit Profile' onClick={() => { editProfile() }} />
-                    }
-                </div>
-                <div>
-                    <h2>posts: {posts.length}</h2>
-                    <h2>Following: {userInfo.following.length}</h2>
+                <div className='justifyContentCenter'>
+                    <div className='flexRow'>
+                        <h1>{userInfo.username}</h1>
+                        {(userInfoContext?.user?.username !== userInfo.username) && (!followedByMe) &&
+                            <input type='submit' value='Follow' onClick={toFollow} />
+                        }
+                        {(userInfoContext?.user?.username !== userInfo.username) && (followedByMe) &&
+                            <input type='submit' value='Unfollow' onClick={toUnFollow} />
+                        }
+                        {(userInfoContext?.user?.username === userInfo.username) &&
+                            // <input type='submit' value='Edit Profile' onClick={() => { setToggleUpdateModal(!toggleUpdateModal) }} />
+                            <SettingsIcon onClick={() => { setToggleUpdateModal(!toggleUpdateModal) }}></SettingsIcon>
+                        }
+                    </div>
+                    <div className='flexRow'>
+                        <h2>posts: {posts.length}</h2>
+                        <h2>Following: {userInfo.following.length}</h2>
+                    </div>
                 </div>
 
             </div>
@@ -126,44 +131,95 @@ function User({ user, className }: { user?: {}, className?: string }) {
         </section>
         {posts ? <section className='grid'>
             {posts.map((post) => {
-                return <Post post={post} setPostClicked={()=>{memoSetPostClicked(post)}}
-                      postContext='user' className='' sizeModal={true}></Post>
+                return <Post post={post} setPostClicked={() => { memoSetPostClicked(post) }}
+                    postContext='user' className='' sizeModal={true}></Post>
             })
             }</section> :
             <div>no posts yet</div>
         }
 
-        {(postClicked.username && togglePostModal) && <PostModal post={postClicked} toggle={()=>{setTogglePostModal(!togglePostModal)}} className='d'/>}
+        {(userInfo && toggleUpdateModal) && <ChangePropsModal toggle={() => setToggleUpdateModal(!toggleUpdateModal)} ></ChangePropsModal>}
 
+        {(postClicked.username && togglePostModal) && <PostModal post={postClicked} toggle={() => { setTogglePostModal(!togglePostModal); memoSetPostClicked({ username: '' }) }} />}
+        {(userInfoContext?.user?.username === userInfo.username) && profilePicClicked && <ProfilePicModal toggle={() => { setProfilePicClicked(!profilePicClicked) }} />}
 
     </div>
 }
 
 export default styled(User)`
     height: 100vh;
+    overflow: scroll;
+
     .grid {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr 1fr;
-        column-gap: 10px;
-        row-gap: 10px;
+        grid-auto-rows: 1fr;
+        column-gap: 1px;
+        row-gap: 1px;
         width: 80%;
         margin: auto;
         justify-items: strech;
         align-items: strech;
-
-        
+        padding: 0 0 125px 0;
 
     }
 
+    .justifyContentCenter {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .flexRow {
+        display: flex;
+        align-items: cetner;
+        gap: 3em;
+    }
+
+    .flexRow h1 {
+    padding: 0px;
+    margin: 0px;
+    }
+
+
     .userDetails {
         width: 80%;
-        margin: auto;
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: 5em;
+        margin-bottom: 5em;
+        max-width: 800px;
+    }
+
+    .usersDetailsChild__profilePic__edit__container {
+        width: 100%;
+        justify-content: space-around;
+        display: flex;
+        gap: 1em;
     }
 
     .profilePic {
         border-radius: 20px;
-        width: 15.625rem;
-        height: 15.625rem;
+        width: 15.625em;
+        height: 15.625em;
     }
+
+    .userDetails{
+        display: flex;
+    }
+
+    .profilePic {
+        border: 1px solid black;
+        border-radius: 120px ;
+    }
+
+
+    @media (max-width: 36.0625rem) {
+        .usersDetailsChild__profilePic__edit__container {
+            flex-direction: column;
+            align-items: center;
+}
+     }
+
+
 `

@@ -8,7 +8,7 @@ interface Image {
     mediaList: Array<string>;
 }
 
-function Image({ post, className }: { post: Image, className?: string}) {
+function Image({ post, className, postContext }: { post: Image, className?: string, postContext?: 'user'|'feed'}) {
     const fileServerUrl = 'http://localhost:3000'
 
     return <div className={className}>
@@ -20,18 +20,12 @@ function Image({ post, className }: { post: Image, className?: string}) {
 }
 
 export default styled(Image)`
-    height: 100%;
+
+    height: ${props => props.postContext === 'user' ? "100%" : "500px"};
     width: 100%;
     img {
         object-fit:cover;
-        height: 30rem;
-        width: 25rem;
-    }
-
-    @media (max-width: 35.833125rem) {
-        img {
-            height: 100%;
-            width: 100%;
-        }
+        height: 100%;
+        width: 100%;
     }
 `

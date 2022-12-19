@@ -1,4 +1,5 @@
-import React, { Children } from 'react'
+import React, { Children, useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import InstagramIcon from '@mui/icons-material/Instagram';
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
@@ -8,45 +9,97 @@ import NearMeIcon from '@mui/icons-material/NearMe';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useContext } from 'react';
 import './Navbar.css'
-import { UserContext } from '../../../store/context/UserContext'; 
+import { UserContext } from '../../../store/context/UserContext';
 import { serverUrl } from '../../../utils/FileServerIUrl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { Stack, TextField, InputAdornment, Button } from '@mui/material'
 import { createTheme } from '@mui/material'
 import { NONAME } from 'dns';
+import UploadPost from './UploadPost'
+import UploadPostModal from './UploadPostModal'
+import axios from 'axios';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 function Navbar({ className }: { className?: string }) {
+
+    const [toggleModal, setToggleModal] = useState(false)
+    const location = useLocation()
+    const navigate = useNavigate()
     const userInfo = useContext(UserContext)
+    const { user } = useContext(UserContext)
+
+    useEffect(()=>{
+        console.log(userInfo.user?.media)
+    })
+        
+    async function logout() {
+        fetch('http://localhost:3000/api/logout', { credentials: 'include' })
+            .then((res) => {
+                console.log(res)
+                userInfo.signOut()
+                navigate('/login')
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
+    
+
+
+
+
     return <>
-        <nav className={className} style={{ position: 'sticky', top: '0px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: 'auto', backgroundColor: 'white', border: '1.5px solid #eeeeee', height: '7.66625rem'
- , overflow: 'none' }}>
-            <div className='navChild'>
-                <div className='h1Container'>
-                    <h1 className='navChild__child header'><Link to='feed' className='headerLink'>INSTAGRAM</Link></h1>
-                </div>
-                <div className='navChild__child textField__container'><TextField sx={{ input: { color: '#5b5959' } }} className='textField' label='Search'
-                    InputProps={{ startAdornment: <InputAdornment position='start'><SearchIcon></SearchIcon>Search</InputAdornment> }}> </TextField>
-                </div>
-                <ul className='navChild__ul icons_container changeOrder__phone'>
-                    <li className='displayNone__phone'><Link to='/feed'><HomeIcon className='navbarIcon__style icon__home' /></Link></li>
-                    <li><ChatBubbleOutlineIcon className='navbarIcon__style' /></li>
-                    <li><Link to={'/Upload'}><AddCircleOutlineIcon className='navbarIcon__style' /></Link></li>
-                    <li className='displayNone__phone'><NearMeIcon className='navbarIcon__style' /></li>
-                    <li><FavoriteBorderIcon className='navbarIcon__style' /></li>
-                    <li className='displayNone__phone ulChild__imgContainer'>{userInfo?.user?.media ?
-                        <Link to='/user/:username'><img src={`${serverUrl}/${userInfo?.user?.media}`} /></Link> :
-                        <Link to='/user/:username'><img src={`http://localhost:3000/uploads/search-grey-1.png`} /></Link>}
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        {(location.pathname !== '/login' && location.pathname !== '/register') ?
+            <div>
+                <nav className={className}>
+                    <div className='navChild'>
+                        <div className='h1Container'>
+                            <h1 className='navChild__child header'><Link to='feed' className='headerLink'>INSTAGRAM</Link></h1>
+                        </div>
+                        <div className='navChild__child textField__container'><TextField sx={{ input: { color: '#5b5959' } }} className='textField' label='Search'
+                            InputProps={{ startAdornment: <InputAdornment className='input' position='start'><SearchIcon></SearchIcon>Search</InputAdornment> }}> </TextField>
+                        </div>
+                        <ul className='navChild__ul icons_container changeOrder__phone'>
+                            <li onClick={logout}><LogoutIcon className='navbarIcon__style'></LogoutIcon></li>
+                            <li className='displayNone__phone'><Link to='/feed'><HomeIcon className='navbarIcon__style icon__home' /></Link></li>
+                            <li><ChatBubbleOutlineIcon className='navbarIcon__style' /></li>
+                            <li><AddCircleOutlineIcon className='navbarIcon__style' onClick={() => { setToggleModal(!toggleModal) }} /></li>
+                            <li className='displayNone__phone'><NearMeIcon className='navbarIcon__style' /></li>
+                            <li><FavoriteBorderIcon className='navbarIcon__style' /></li>
+                            <li className='ulChild__imgContainer navbarIcon__style'>{userInfo?.user?.media ?
+                                <Link to={`/user/${userInfo.user?._id}`}><img className='icon_img_smallfont' src={`${serverUrl}/${userInfo?.user?.media}`} /></Link> :
+                                <Link to={`/user/${userInfo.user?._id}`}><img className='icon_img_smallfont' src={`http://localhost:3000/uploads/search-grey-1.png`} /></Link>}
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                {toggleModal && <UploadPostModal toggle={() => { setToggleModal(!toggleModal) }} />}
+            </div> :
+            <div style={{display: 'none'}}> </div>
+        }
+
     </>
 
 
 }
 
 export default styled(Navbar)`
+
+position: sticky;
+top: 0px;
+width: 100%;
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin: auto;
+background-color: white;
+border: 1.5px solid #eeeeee;
+height: 7.66625rem;
+overflow: none;
+box-shadow: rgba(220, 99, 204, 0.25) 0px 5px 30px;
+
 
 .navChild {
      width: 100%;
@@ -92,6 +145,8 @@ h1 {
         border-radius: 20px;
         outline: none;
         color: #5b5959;
+        word-wrap: break-word;
+
     }
 
 .list_item {
@@ -112,7 +167,7 @@ h1 {
     font-size: 2.1875rem;
 }
 }
-@media (max-width: 62.5rem) {
+@media (max-width: 72rem) {
     .textField__container {
         display: none;
     }
@@ -133,7 +188,7 @@ h1 {
 }
 @media (max-width: 36.0625rem) {
     .headerLink{
-    font-size: 1.8rem;
+    font-size: 1.2rem;
 }
     .changeOrder__phone {
         order: -1;
@@ -152,18 +207,39 @@ h1 {
     }
 
     .icons_container {
-        gap: 1em;
+        gap: 0.1em;
         padding-inline-start: 0px;
 
     }
+
+    .navbarIcon__style {
+    padding: 5px;
+    border-radius: 16.5px;
+}
+
+.ulChild__imgContainer {
+    width: 25px;
+    height: 25px;
+}
+
+.icon_img_smallfont {
+    width: 100%;
+    height: 100%;
+}
+/* .ulChild__imgContainer > img {
+    width: 100%;
+} */
+
 } 
+
+
 
 .icon__home {
      color: black;
 }
 
 .navbarIcon__style:hover, img:hover, h1:hover  {
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 5px 15px;
+    box-shadow: rgba(220, 99, 204, 0.25) 0px 5px 30px;
     transition: 150ms;
 }
 

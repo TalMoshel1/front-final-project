@@ -10,6 +10,10 @@ import { userInfo } from 'os';
 import styled from 'styled-components'
 import { setDefaultResultOrder } from 'dns';
 import { UserContext } from '../store/context/UserContext';
+import { follow } from '../functions/userFunctions';
+import { UserInterface } from '../interfaces/interfaces';
+import socket from '../utils/socket'
+
 
 
 
@@ -33,18 +37,25 @@ export function Feed({ className }: { className?: string }) {
   const [posts, setPosts] = useState<Post[]>([])
   const [usersState, setUsers] = useState<{}[] | []>([])
   const [page, setPage] = useState(0);
-  const [userClicked, memoSetUserClicked] = useState('')
+  const [userClicked, memoSetUserClicked] = useState<undefined | string>('')
   const [loading, setLoading] = useState(false)
+  const [toggleSuggestions, setToggleSuggestions] = useState(false)
   const userInfoContext = useContext(UserContext)
   const navigate = useNavigate()
   const firstLoad = useRef(false)
   const infinteScrollContainer = useRef<HTMLDivElement>(null)
-  console.log('feed')
   const cancelPegination = useRef(false)
+  
 
-  function loadMore() {
 
-  }
+  useEffect(() => {
+    socket.on('receive_post', (postObj) => {
+      setPosts((prevPosts)=>{
+        return [postObj.data, ...prevPosts]
+      })
+    })
+  }, [socket])
+
 
   useEffect(() => {
     async function setDataSuggestions() {
@@ -67,6 +78,8 @@ export function Feed({ className }: { className?: string }) {
 
   useEffect(() => {
     const controller = new AbortController()
+
+
 
     async function setDataPosts() {
       setLoading(true)
@@ -91,7 +104,10 @@ export function Feed({ className }: { className?: string }) {
           firstLoad.current = false
         })
     }
-    if (!loading) setDataPosts();
+    if (!loading){
+      setDataPosts()
+    } 
+    
     return () => {
       if (firstLoad.current) {
         controller.abort()
@@ -100,7 +116,6 @@ export function Feed({ className }: { className?: string }) {
   }, [page])
 
   useEffect(() => {
-
     const observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(e => {
         if (e.isIntersecting && posts.length && !cancelPegination.current) {
@@ -118,6 +133,7 @@ export function Feed({ className }: { className?: string }) {
     return () => {
       observer.disconnect()
     }
+
   }, [posts])
 
 
@@ -126,18 +142,40 @@ export function Feed({ className }: { className?: string }) {
     {posts && suggestions ? <Flex>
       <ListStyle overflow='none'>
         <List direction='column'>{posts.map((post) => {
-          return <Post post={post} setUserClicked={memoSetUserClicked} postContext='feed' className='h' sizeModal={true}></Post> // every Post has: _id (unique value of post ID) and author (unique value of USER NAME)
+          return <Post post={post} setUserClicked={memoSetUserClicked} postContext='feed' sizeModal={true}></Post> // every Post has: _id (unique value of post ID) and author (unique value of USER NAME)
         }
         )}
         </List>
         <div ref={infinteScrollContainer} style={{ height: '50px' }}></div>
       </ListStyle>
       <SuggestionsStyle>
-        {suggestions.map((sugg, array) => {
-          if (array <= 4) {
-            return <Suggestion sugg={sugg} setUserClicked={memoSetUserClicked}></Suggestion>
-          }
-        })}
+
+        {toggleSuggestions ?
+          <div>
+
+            <h1 onClick={() => { setToggleSuggestions(!toggleSuggestions) }}>close all seggestions</h1>
+            {suggestions.map((sugg: UserInterface, array) => {
+              return <Suggestion sugg={sugg} setUserClicked={memoSetUserClicked} follow={follow} ></Suggestion>
+
+            })}
+
+          </div>
+          :
+          <div>
+
+            <h1 onClick={() => { setToggleSuggestions(!toggleSuggestions) }}>see all seggestions</h1>
+            {suggestions.map((sugg, array) => {
+              if (array <= 4) {
+                return <Suggestion sugg={sugg} setUserClicked={memoSetUserClicked} follow={follow} ></Suggestion>
+              }
+            })}
+
+          </div>
+
+        }
+
+
+
       </SuggestionsStyle>
     </Flex> : <div>loading</div>}
 

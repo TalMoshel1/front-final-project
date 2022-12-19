@@ -23,11 +23,6 @@ type Post = {
   author: string
 }
 
-type User = {
-  _id: object;
-  media: [];
-}
-
 export function Feed({ className }: { className?: string }) {
   const [suggestions, setSuggestions] = useState([])
   const [posts, setPosts] = useState<Post[]>([])
@@ -39,7 +34,6 @@ export function Feed({ className }: { className?: string }) {
   const navigate = useNavigate()
   const firstLoad = useRef(false)
   const infinteScrollContainer = useRef<HTMLDivElement>(null)
-  console.log('feed')
   const cancelPegination = useRef(false)
 
 
