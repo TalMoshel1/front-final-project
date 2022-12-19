@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import RegisterStyle from '../lib/components/elements/registrationLoginStyle'
+
 
 
 async function getJSON(url: string) {
@@ -8,14 +11,14 @@ async function getJSON(url: string) {
     return res.text();
 }
 
-export function Registration() {
+function Registration({ className }: { className?: string }) {
     const usernameRef = useRef<HTMLInputElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
     const fullnameRef = useRef<HTMLInputElement>(null)
     const numberOrEmailRef = useRef<HTMLInputElement>(null)
     const navigate = useNavigate()
+    const [errors, setErrors] = useState<[] | { message: string }[]>([])
 
-    console.log('registration page')
 
     function register() {
         Axios.post('http://localhost:3000/api/register', {
@@ -23,31 +26,85 @@ export function Registration() {
             password: passwordRef.current?.value,
             fullname: fullnameRef.current?.value,
             email: numberOrEmailRef.current?.value
-        }).then(res => {
-            return Axios.post('http://localhost:3000/api/login', {
-                username: usernameRef.current?.value,
-                password: passwordRef.current?.value
-            }, {withCredentials: true})
         })
-        .then(res=>{
-            navigate('/feed')
-        })
-        .catch(err => {
-            console.log(err)
-        })
+            .then(res => {
+                return Axios.post('http://localhost:3000/api/login', {
+                    username: usernameRef.current?.value,
+                    password: passwordRef.current?.value
+                }, { withCredentials: true })
+            })
+            .then(res => {
+                navigate('/feed')
+            })
+            .catch(err => {
+                console.log(err)
+                setErrors(err.response.data)
+
+            })
     }
-    return <div style={{ display: 'flex', flexDirection: 'column', margin: 'auto', padding: '1em', alignItems: 'center', width: 'fit-content', backgroundColor: 'white', border: '0.1em solid black' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+    useEffect(() => {
+    }, [errors])
+    return <RegisterStyle page='register'>
+        <div className={className} >
             <h1>Registration</h1>
-            <label>mobile number or email</label>
-            <input type='text' ref={numberOrEmailRef} />
-            <label>full name</label>
-            <input type='text' ref={fullnameRef} />
-            <label>username</label>
-            <input type='text' ref={usernameRef} />
-            <label>password</label>
-            <input type="password" ref={passwordRef} />
+            <div className='container'>
+                <label>mobile number or email</label>
+                <input type='text' ref={numberOrEmailRef} />
+            </div>
+            <div className='container'>
+                <label>full name</label>
+                <input type='text' ref={fullnameRef} />
+            </div>
+            <div className='container'>
+                <label>username</label>
+                <input type='text' ref={usernameRef} />
+            </div>
+            <div className='container'>
+                <label>password</label>
+                <input type="password" ref={passwordRef} />
+            </div>
             <button onClick={register}>Sign Up</button>
+            {errors && <div>{errors.map((err: { message: string }) => {
+                return <p>{err.message}</p>
+            })}</div>}
+            <h2 onClick={() => navigate('/login')}>Already has a user? click here</h2>
         </div>
-    </div>
+    </RegisterStyle>
 }
+
+export default styled(Registration)`
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+        width: 100%;
+        max-width: 300px;
+        gap: 1em;
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #333333;
+        }
+
+        button {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #333333;
+            max-width: 300px;
+            width: 100%;
+            background-color: #d475d4;
+
+        }
+    
+`

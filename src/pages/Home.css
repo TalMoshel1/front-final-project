@@ -8,11 +8,11 @@
 }
 
 html {
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 #root {
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 @media (prefers-reduced-motion: no-preference) {

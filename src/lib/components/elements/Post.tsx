@@ -16,24 +16,22 @@ async function getJSON(url: string) {
   return res.json();
 }
 
-function Post({ post, setUserClicked, postContext, setPostClicked, className, sizeModal, toggle }: { post?: any, postContext: 'feed' | 'user', setUserClicked?: (userClicked: string) => void, setPostClicked?: (postClicked: boolean) => void, className: string, sizeModal?: boolean, toggle?: () => void  }) {
+function Post({ post, setUserClicked, postContext, setPostClicked, className, sizeModal, toggle }: { post?: any, postContext: 'feed' | 'user', setUserClicked?: (userClicked: string) => void, setPostClicked?: (postClicked: boolean) => void, className?: string, sizeModal?: boolean, toggle?: () => void }) {
   const [numLikes, addLike] = useState(0);
   const params = useParams();
   const navigate = useNavigate()
   const fileServerUrl = 'http://localhost:3000'
 
-  useEffect(()=>{
-  })
 
   return <div className={className}>
     {(post && postContext === 'feed') &&
-      <li>
+      <div className={!sizeModal ? 'feed_item li__modal' : 'feed_item'}>
         {!sizeModal && <Image post={post} className='modal__image'></Image>}
-        <div className={!sizeModal ? 'post__content': ''}>
+        <div style={{ width: '100%' }} className={!sizeModal ? 'post__content' : ''}>
           <div className='post__header'>
             <div className='profilePic__container'>
-              {post.media ?
-                <img className='profile__img' src={`${serverUrl}/${post.media}`} /> :
+              {post.author.media ?
+                <img className='profile__img' src={`${serverUrl}/${post.author.media}`} /> :
                 <img className='profile__img' src={`http://localhost:3000/uploads/search-grey-1.png`} />
               }
             </div>
@@ -51,16 +49,16 @@ function Post({ post, setUserClicked, postContext, setPostClicked, className, si
           </div>
           <div className='likesBodyUsername'>
             <p>Num likes {numLikes}</p>
-            <p><strong>{post.username}</strong> <span>lorem50</span></p>
+            <p className='postText' ><strong>{post.username}</strong> <div className='postBody'>{post.body}</div></p>
           </div>
-          <Comment className='why I have to give className, whats the point?' />
-          </div>
+          <Comment />
+        </div>
 
-      </li>}
+      </div>}
 
     {(post && postContext === 'user' && setPostClicked) &&
       <div className='user' onClick={() => { setPostClicked(post) }}>
-        <Image post={post}></Image>
+        <Image post={post} postContext={postContext}></Image>
       </div>}
 
   </div>
@@ -68,30 +66,74 @@ function Post({ post, setUserClicked, postContext, setPostClicked, className, si
 
 export default styled(Post)`
 
-  margin-bottom: 3em;
+  margin-bottom: ${props => props.postContext === 'user' ? "0em" : "3em"};
   background-color: white;
   border: 1.5px solid #eeeeee;
   border-radius: 20px;
-  width: 100%;
+  width: ${props => props.postContext === 'user' ? "100%" : "80%"};
+  margin-left: auto;
+  margin-right: AUTO;
+  min-width: ${props => props.postContext === 'user' ? "50px" : "100px"};
+  overflow: hidden;
+  /* min-height: ${props => props.postContext === 'user' ? "50px" : "500px"}; */
+  max-height: ${props => props.postContext === 'user' ? "350px" : "fit-content"};
+  height: 100%;
+
 
   .modal__image {
     height: 100%;
+    align-self: center;
   }
 
   .post__content {
-    overflow: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
     width: 800px;
+    max-height: 80vh;
+    background: #ffffff;
+  }
+
+  .postText{
+    width: 100%;
+    text-align: start;
 
   }
 
-    li {
+  .postBody {
+    max-width: 500px;
+    word-wrap: break-word;
+    
+  }
+
+    .feed_item {
       display: flex;
+
+      &.li__modal {
+        background: #000000;
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+
+        
+      .post__content {
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 800px;
+        max-height: 80vh;
+        background: #ffffff;
+  }
+      }
+    }
+
+    @media screen and (max-width: 36.0625rem) {
+      .feed_item.li__modal {
+        flex-direction: column;
+      }
     }
 
 .user {
   width: 100%;
   height: 100%;
-  margin-bottom: 1em;
 }
 
 
@@ -134,47 +176,8 @@ export default styled(Post)`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 10px;
+    padding: 0px 10px;
     font-size: 1rem;
+
   }
 `
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// interface IPropsLike {
-//   onLike: () => void;
-//   children: JSX.Element;
-// }
-
-// function Like({ onLike, children }: IPropsLike) {
-//   return <button style={{padding: '0px', borderWidth: '0px', backgroundColor: 'white'}} onClick={onLike}>{children}</button>
-// }
-
-// function PostBox({ children }: { children: JSX.Element[] }) {
-//   return <div style={{
-//     border: '4px solid black',
-//     color: "black",
-//     marginBottom: '1em',
-//     width: '100%',
-//     textAlign: 'center'
-//   }}>
-//     {children}
-//   </div>
-
-// }

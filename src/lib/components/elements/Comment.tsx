@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components'
-function Comment({ className }: { className: string }) {
-    let messageValue = useRef<any>(null)
-    console.log('log...')
 
+
+function Comment({ className }: { className?: string }) {
+    let messageValue = useRef<any>(null)
     function updateMessage(e: any) {
         messageValue.current = e.target.value
         console.log(messageValue.current)
@@ -31,6 +31,7 @@ const PostInput = styled.input<{ messageValue: any }>`
 `
 
 export default styled(Comment)`
+    padding: 20px;
     width: 100%;
     display: flex;
     border-top: 1.5px solid #eeeeee;

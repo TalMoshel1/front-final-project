@@ -1,10 +1,10 @@
 import './Navbar.css'
 import styled from 'styled-components'
 import Post from './Post';
+import UploadPost from './UploadPost'
 
-function PostModal({ post, className, toggle }: { post: {}, className?: string, toggle: () => void }) {
 
-
+function UploadPostModal({ className, toggle }: { className?: string, toggle: () => void }) {
 
     return <>
         <div style={{
@@ -18,14 +18,12 @@ function PostModal({ post, className, toggle }: { post: {}, className?: string, 
         }} onClick={()=>{toggle(); }}>
 
         </div>
-        <div className={className}>
-            <Post post={post} postContext='feed' className='d' />
-        </div>
+        <UploadPost />
     </>
 }
 
 
-export default styled(PostModal)`
+export default styled(UploadPostModal)`
     position: absolute;
     top: 40px;
     left: 50%;
@@ -34,4 +32,5 @@ export default styled(PostModal)`
     transform: translateX(-50%); // relates to the width of the element
     z-index:20;
     height: 500px;
+    overflow: hidden;
 `

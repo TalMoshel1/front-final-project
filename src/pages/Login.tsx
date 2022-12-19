@@ -1,56 +1,143 @@
-import React, { useEffect, useState, useRef, createContext } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import Axios from 'axios'
 import { useNavigate } from 'react-router-dom';
-
+import { UserContext } from '../store/context/UserContext';
+import styled from 'styled-components';
+import RegisterStyle from '../lib/components/elements/registrationLoginStyle'
 
 // async function getJSON(url: string) {
 //     const res = await fetch(url);
 //     return res.text();
 // }
 
-export function Login() {
+function Login({ className }: { className?: string }) {
     const usernameRef = useRef<HTMLInputElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
     const [loggedUser, setLoggedUser] = useState('')
-    const [error, setError] = useState('')
+    const [errors, setErrors] = useState<[] | { message: '' }[]>([])
     const [isShowPassword, setisShowPassword] = useState(false)
     const navigate = useNavigate()
-    console.log('login work')
+    const userContext = useContext(UserContext)
+    const userInfoUrl = 'http://localhost:3000/api/user-info'
+
+    useEffect(() => {
+        fetch('http://localhost:3000/api/user-info')
+            .then((res) => {
+                if (res.status !== 200) {
+                    return
+                } else {
+                    navigate('/feed')
+                }
+            })
+
+    })
 
 
     function login() {
         Axios.post('http://localhost:3000/api/login', {
             username: usernameRef.current?.value || '',
             password: passwordRef.current?.value || ''
-        }, {withCredentials: true}).then(res => {
-            setLoggedUser(res.data)
-            console.log(res.data)
-            return res
-        }).then((res)=>{
-            console.log('navigating despite error')
-            navigate('/feed')
-        }).catch(err => {
-            setError(err)
-            console.log(`error: ${err}`)
-        })
+        }, { withCredentials: true })
+            .then(res => {
+                return res
+            })
+            .then((res) => {
+                navigate('/feed')
+            })
+            .catch(err => {
+                if (Array.isArray(err.response.data[0])) {
+                    setErrors(err.response.data[0])
+                } else {
+                    setErrors([err.response.data[0]])
+                }
+            })
+
 
     }
-    console.log(loggedUser)
 
-    return <div style={{ display: 'flex', flexDirection: 'column', margin:'auto', padding: '1em', alignItems: 'center', width: 'fit-content', backgroundColor:'white', border: '0.1em solid black' }}>
-        <h1>INSTAGRAM</h1>
-        <div className="registration" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    useEffect(() => {
+        // userContext.signOut()
+    }, [])
+
+    return <RegisterStyle page='login'>
+        <div className={className}>
             <h1>Login</h1>
-            <label>Username</label>
-            <input style={{ width: '100%', padding: '0px' }} type='text' ref={usernameRef} /><br></br>
-            <label>Password</label>
-            <div style={{ display: 'inline' }}>
-                <input style={{ width: '70%', padding: '0px' }} type={isShowPassword ? "text" : "password"} ref={passwordRef} />
-                <button style={{ display: 'inline', borderWidth: '0px', width: '27%' }} onClick={() => setisShowPassword(!isShowPassword)}>hide</button>
-                <button style={{ backgroundColor: 'blue', borderRadius: '0px', display: 'block', width: '100%' }} onClick={login}>Login</button>
-            </div> 
+            <div className='username__container'>
+                <label>Username</label>
+                <input className='name__input' type='text' ref={usernameRef} />
+            </div>
 
-            {loggedUser ? <h1>{loggedUser}</h1> : <h1></h1>}
+            <div className='password__container'>
+                <label>Password</label>
+                <div className='password__row'>
+                    <input className='password' type={isShowPassword ? "text" : "password"} ref={passwordRef} />
+                    <button className='hide' onClick={() => setisShowPassword(!isShowPassword)}>hide</button>
+                </div>
+            </div>
+
+            <button className='submit' onClick={login}>Login</button>
+            {errors && <div>{errors.map((err) => {
+                return <p>{err.message}</p>
+            })}</div>}
+            {loggedUser && <h1>{loggedUser}</h1>}
         </div>
-    </div>
+
+    </RegisterStyle>
 }
+
+
+export default styled(Login)`
+   
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+        width: 100%;
+        max-width: 300px;
+        gap: 1em;
+
+       .password__row{
+            display: flex;
+            width: 100%;
+        }
+
+        .username__container, .password__container {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+        }
+
+        input.password {
+            flex-grow: 1;
+            min-width: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #333333;
+        }
+
+        .name__input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #333333;
+        }
+
+        .hide {
+            min-width: 20px;
+            border-radius: 8px;
+            margin: 0 0 0 10px;
+            border: 1px solid #333333;
+            padding: 10px;
+        }
+
+        .submit {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #333333;
+            width: 100%;
+            display: block;
+            background-color: #d475d4;
+        }
+
+    
+`

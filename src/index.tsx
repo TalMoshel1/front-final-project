@@ -1,14 +1,14 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Home from './pages/Home';
-import Upload from './pages/Upload'
+import Upload from './lib/components/elements/ChangeProfilePhoto'
 import reportWebVitals from './reportWebVitals';
 import { Route, Routes, HashRouter } from "react-router-dom";
 import { Feed } from './pages/Feed';
 import Post from './lib/components/elements/Post';
-import { Registration } from './pages/Registration'
-import { Login } from './pages/Login';
+import  Registration  from './pages/Registration'
+import  Login  from './pages/Login';
 import User from './pages/User'
 import { createContext, useContext, useState, useMemo } from 'react';
 
@@ -26,7 +26,7 @@ root.render(
           <Route path='login' element={<Login></Login>}></Route>
           <Route path='feed' element={<Feed></Feed>}></Route>
           <Route path='user/:id' element={<User></User>}></Route>
-          <Route path='Upload' element={<Upload/>}></Route>
+          {/* <Route path='upload' element={<Upload></Upload>}></Route> */}
         </Route>
       </Routes>
     </HashRouter>
