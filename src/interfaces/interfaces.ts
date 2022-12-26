@@ -9,7 +9,6 @@ export interface UserInterface  {
     tokenCreatedAt?: any;
     created?: Date;
     __v?: any;
-    askToLogOut: false
   }
 
   export type UserStore = {

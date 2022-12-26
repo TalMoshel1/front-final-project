@@ -14,7 +14,7 @@ export function UserHeader() {
         <div className='profilePic__container'>
             {userInfoContext?.user?.media ?
                 <img src={`${serverUrl}/${userInfoContext.user?.media}`} /> :
-                <img src={`http://localhost:3000/uploads/search-grey-1.png`} />
+                <img src={`http://localhost:4000/uploads/search-grey-1.png`} />
             }
         </div>
     </div>

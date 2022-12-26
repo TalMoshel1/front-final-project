@@ -7,7 +7,7 @@ import { UserInterface } from '../interfaces/interfaces'
 
 // export async function follow(userInfo) {
 //     if (userInfo.username) {
-//         Axios.post('http://localhost:3000/api/login', {
+//         Axios.post('http://localhost:4000/api/login', {
 //             username: userInfo.username && userInfo.username
 //         }, { withCredentials: true })
 //         .then(()=>{
@@ -19,7 +19,7 @@ import { UserInterface } from '../interfaces/interfaces'
 // export async function unFollow(userInfo: User, userParams:  Readonly<Params<string>>) {
 //     if (userInfo.username) {
 //         const userId = userParams.id
-//         Axios.post('http://localhost:3000/api/users/unfollow', {
+//         Axios.post('http://localhost:4000/api/users/unfollow', {
 //             id: userId }, { withCredentials: true })
 //         }
 //         return
@@ -27,7 +27,7 @@ import { UserInterface } from '../interfaces/interfaces'
 
 
 export async function setDataSuggestions() {
-  return fetch('http://localhost:3000/api/suggestions/feed', { credentials: 'include' })
+  return fetch('http://localhost:4000/api/suggestions/feed', { credentials: 'include' })
 }
 
 export const x = '1'
@@ -38,17 +38,23 @@ export const x = '1'
 export async function follow(idToFollow: string) {
   if (idToFollow) {
     console.log(idToFollow)
-    return Axios.post('http://localhost:3000/api/users/follow', {
+    return Axios.post('http://localhost:4000/api/users/follow', {
       id: idToFollow
     }, { withCredentials: true })
+    .then(()=>{
+        window.location.reload()
+    })
   }
 }
 
 export async function unFollow(idToUnFollow: string) {
   if (idToUnFollow) {
-    Axios.post('http://localhost:3000/api/users/unfollow', {
+    Axios.post('http://localhost:4000/api/users/unfollow', {
       id: idToUnFollow
     }, { withCredentials: true })
+    .then(()=>{
+        window.location.reload()
+    })
   }
 }
 

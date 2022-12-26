@@ -1,4 +1,4 @@
-import React, { Children, useEffect, useState } from 'react'
+import React, { Children, useEffect, useMemo, useState, useReducer } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import InstagramIcon from '@mui/icons-material/Instagram';
 import SearchIcon from '@mui/icons-material/Search';
@@ -20,6 +20,7 @@ import UploadPost from './UploadPost'
 import UploadPostModal from './UploadPostModal'
 import axios from 'axios';
 import LogoutIcon from '@mui/icons-material/Logout';
+import {USER, userReducer} from '../../../store/context/UserContext'
 
 function Navbar({ className }: { className?: string }) {
 
@@ -28,16 +29,26 @@ function Navbar({ className }: { className?: string }) {
     const navigate = useNavigate()
     const userInfo = useContext(UserContext)
     const { user } = useContext(UserContext)
+    const [userState, dispatch] = useReducer(userReducer,USER)
+
+    // const memoizeduser = useMemo(()=>{return user}
+    // ,[user])
+
+    // useEffect(()=>{
+    //     console.log(user?._id)
+    // }, [user?._id])
 
     useEffect(()=>{
-        console.log(userInfo.user?.media)
-    },[user])
+        dispatch({type:''})
+        console.log(userState)
+    }, [USER])
         
     async function logout() {
-        fetch('http://localhost:3000/api/logout', { credentials: 'include' })
+        fetch('http://localhost:4000/api/logout', { credentials: 'include' })
             .then((res) => {
                 console.log(res)
-                userInfo.signOut()
+                dispatch({type:'deleteUser'})
+                // userInfo.signOut()
                 navigate('/login')
             })
             .catch((err) => {
@@ -55,7 +66,7 @@ function Navbar({ className }: { className?: string }) {
             <div>
                 <nav className={className}>
                     <div className='navChild'>
-                        <div className='h1Container'>
+                        <div className='h1Container displayNone__phone'>
                             <h1 className='navChild__child header'><Link to='feed' className='headerLink'>INSTAGRAM</Link></h1>
                         </div>
                         <div className='navChild__child textField__container'><TextField sx={{ input: { color: '#5b5959' } }} className='textField' label='Search'
@@ -63,14 +74,14 @@ function Navbar({ className }: { className?: string }) {
                         </div>
                         <ul className='navChild__ul icons_container changeOrder__phone'>
                             <li onClick={logout}><LogoutIcon className='navbarIcon__style'></LogoutIcon></li>
-                            <li className='displayNone__phone'><Link to='/feed'><HomeIcon className='navbarIcon__style icon__home' /></Link></li>
+                            <li><Link to='/feed'><HomeIcon className='navbarIcon__style icon__home' /></Link></li>
                             <li><ChatBubbleOutlineIcon className='navbarIcon__style' /></li>
                             <li><AddCircleOutlineIcon className='navbarIcon__style' onClick={() => { setToggleModal(!toggleModal) }} /></li>
                             <li className='displayNone__phone'><NearMeIcon className='navbarIcon__style' /></li>
                             <li><FavoriteBorderIcon className='navbarIcon__style' /></li>
                             <li className='ulChild__imgContainer navbarIcon__style'>{userInfo?.user?.media ?
                                 <Link to={`/user/${userInfo.user?._id}`}><img className='icon_img_smallfont' src={`${serverUrl}/${userInfo?.user?.media}`} /></Link> :
-                                <Link to={`/user/${userInfo.user?._id}`}><img className='icon_img_smallfont' src={`http://localhost:3000/uploads/search-grey-1.png`} /></Link>}
+                                <Link to={`/user/${userInfo.user?._id}`}><img className='icon_img_smallfont' src={`http://localhost:4000/uploads/search-grey-1.png`} /></Link>}
                             </li>
                         </ul>
                     </div>
@@ -187,6 +198,9 @@ h1 {
 
 }
 @media (max-width: 36.0625rem) {
+    .navChild{
+        justify-content: center;
+    }
     .headerLink{
     font-size: 1.2rem;
 }
@@ -218,8 +232,10 @@ h1 {
 }
 
 .ulChild__imgContainer {
-    width: 25px;
-    height: 25px;
+    // width: 25px;
+    // height: 25px;
+    width: 1.9em;
+    height: 1.9em;
 }
 
 .icon_img_smallfont {

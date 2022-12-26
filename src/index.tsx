@@ -2,11 +2,9 @@ import React, { ReactNode, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Home from './pages/Home';
-import Upload from './lib/components/elements/ChangeProfilePhoto'
 import reportWebVitals from './reportWebVitals';
 import { Route, Routes, HashRouter } from "react-router-dom";
 import { Feed } from './pages/Feed';
-import Post from './lib/components/elements/Post';
 import  Registration  from './pages/Registration'
 import  Login  from './pages/Login';
 import User from './pages/User'

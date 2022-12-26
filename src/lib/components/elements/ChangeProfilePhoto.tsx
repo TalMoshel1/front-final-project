@@ -30,7 +30,7 @@ function ChangeProfilePhoto({ className, toggle }: { className?: string, toggle:
       data.append('media', file);
       const config = {
         method: 'put',
-        url: `http://localhost:3000/api/user/${userInfoContext.user?._id}`,
+        url: `http://localhost:4000/api/user/${userInfoContext.user?._id}`,
         data: data,
         withCredentials: true,
         headers: {
@@ -42,12 +42,13 @@ function ChangeProfilePhoto({ className, toggle }: { className?: string, toggle:
           if (updatedUser) {
             const userInfo = updatedUser.data
             userInfoContext.updateUser(userInfo, `user/${userInfo._id}`)
+            toggle()
           } 
         }).catch((error) => {
           console.log(error)
         });
     } else if (file === 'delete') {
-      Axios.put(`http://localhost:3000/api/user/${userInfoContext.user?._id}`, { media: 'shushu' })
+      Axios.put(`http://localhost:4000/api/user/${userInfoContext.user?._id}`, { media: 'shushu' })
         .then((updatedUser) => {
           if (updatedUser) {
             const userInfo = updatedUser.data
