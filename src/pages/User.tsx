@@ -28,9 +28,11 @@ function User({ user, className }: { user?: {}, className?: string }) {
 
 
     useEffect(() => {
+        const controller = new AbortController()
+        const signal = controller.signal
         const userId = userParams.id
         const searchUserAPI = async () => { }
-        fetch(`http://localhost:3000/api/user/${userId}`, { credentials: 'include', mode: 'cors', })
+        fetch(`http://localhost:4000/api/user/${userId}`, { signal, credentials: 'include', mode: 'cors', })
             .then((res) => {
                 return res.json()
             })
@@ -46,7 +48,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
                 return res
             })
             .then((user) => {
-                return fetch(`http://localhost:3000/api/posts/${user.username}`, { credentials: 'include', mode: 'cors', })
+                return fetch(`http://localhost:4000/api/posts/${user.username}`, { credentials: 'include', mode: 'cors', })
             }).then((res) => {
                 return res.json()
             }).then((res) => {
@@ -54,13 +56,17 @@ function User({ user, className }: { user?: {}, className?: string }) {
                 setPosts(res)
             })
             .catch((err) => {
+                if (err.name === 'AbortError') {
+                    console.log(`request cancelled`)
+                    return
+                }
                 console.log(userInfo.username)
                 userInfoContext && userInfoContext.signOut()
                 console.log(err)
             })
 
         return () => {
-
+            controller.abort()
         }
     }, [userParams])
 
@@ -104,7 +110,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
             <div className='usersDetailsChild__profilePic__edit__container'>
                 {userInfo.media ?
                     <img className='profilePic' src={`${serverUrl}/${userInfo.media}`} onClick={() => { setProfilePicClicked(!profilePicClicked); }} /> :
-                    <img className='profilePic' src={`http://localhost:3000/uploads/search-grey-1.png`} onClick={() => { setProfilePicClicked(!profilePicClicked); }} />
+                    <img className='profilePic' src={`http://localhost:4000/uploads/search-grey-1.png`} onClick={() => { setProfilePicClicked(!profilePicClicked); }} />
                 }
                 <div className='justifyContentCenter'>
                     <div className='flexRow'>

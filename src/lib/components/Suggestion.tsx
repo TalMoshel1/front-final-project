@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { serverUrl } from '../../utils/FileServerIUrl'
 import { UserInterface } from '../../interfaces/interfaces'
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { UserContext } from '../../store/context/UserContext';
+import { UserContext, USER, userReducer } from '../../store/context/UserContext';
 import {useNavigate} from 'react-router-dom'
 
 
@@ -14,7 +14,7 @@ function Suggestion({ sugg, setUserClicked, className, follow }: { sugg: UserInt
     async function toFollow() {
         if (userInfoContext) {
             const updatedUser = await follow(sugg._id)
-            userInfoContext.updateUser(updatedUser, 'feed')
+            // userInfoContext.updateUser(updatedUser, 'feed')
         }
         return
     }

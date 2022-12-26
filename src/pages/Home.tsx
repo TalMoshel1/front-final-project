@@ -7,7 +7,7 @@ import { Header } from '../lib/components/elements/Header'
 import io from 'socket.io-client'
 function Home() {
 
-  return <div style={{ backgroundColor: '#FAFAFA', height: '100vh' }}>
+  return <div style={{ backgroundColor: '#FAFAFA', height: '100vh', overflow: 'hidden' }}>
     {/* <Navbar/> */}
     <UserProvider>
       <Header />

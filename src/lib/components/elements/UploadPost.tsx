@@ -63,7 +63,7 @@ function UploadPost({ className }: { className?: string }) {
                 data.append('body', body)
                 const config = {
                     method: 'post',
-                    url: `http://localhost:3000/api/post`,
+                    url: `http://localhost:4000/api/post`,
                     data: data,
                     body: body,
                     withCredentials: true,

@@ -9,7 +9,7 @@ interface Image {
 }
 
 function Image({ post, className, postContext }: { post: Image, className?: string, postContext?: 'user'|'feed'}) {
-    const fileServerUrl = 'http://localhost:3000'
+    const fileServerUrl = 'http://localhost:4000'
 
     return <div className={className}>
         {post.mediaList.map((media: any) => {

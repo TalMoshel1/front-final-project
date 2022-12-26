@@ -20,7 +20,7 @@ function Post({ post, setUserClicked, postContext, setPostClicked, className, si
   const [numLikes, addLike] = useState(0);
   const params = useParams();
   const navigate = useNavigate()
-  const fileServerUrl = 'http://localhost:3000'
+  const fileServerUrl = 'http://localhost:4000'
 
 
   return <div className={className}>
@@ -32,7 +32,7 @@ function Post({ post, setUserClicked, postContext, setPostClicked, className, si
             <div className='profilePic__container'>
               {post.author.media ?
                 <img className='profile__img' src={`${serverUrl}/${post.author.media}`} /> :
-                <img className='profile__img' src={`http://localhost:3000/uploads/search-grey-1.png`} />
+                <img className='profile__img' src={`http://localhost:4000/uploads/search-grey-1.png`} />
               }
             </div>
             <div className='h1__container'>

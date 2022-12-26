@@ -33,5 +33,6 @@ export default styled(PostModal)`
     width: calc(100% - 40px);
     transform: translateX(-50%); // relates to the width of the element
     z-index:20;
-    height: 500px;
+    width: 80%;
+    height: 80%;
 `
