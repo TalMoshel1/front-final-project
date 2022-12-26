@@ -31,7 +31,7 @@ function Navbar({ className }: { className?: string }) {
 
     useEffect(()=>{
         console.log(userInfo.user?.media)
-    })
+    },[user])
         
     async function logout() {
         fetch('http://localhost:3000/api/logout', { credentials: 'include' })

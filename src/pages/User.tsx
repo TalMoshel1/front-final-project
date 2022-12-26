@@ -38,8 +38,8 @@ function User({ user, className }: { user?: {}, className?: string }) {
                 setUserInfo(res)
                 return res
             })
-            .then((res) => {
-                const userId = res._id
+            .then((res: UserInterface) => {
+                const userId = res._id||""
                 if (userInfoContext.user?.following?.includes(userId)) {
                     setFollowedByMe(true)
                 }

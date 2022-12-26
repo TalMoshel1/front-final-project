@@ -1,7 +1,7 @@
 export interface UserInterface  {
     _id?: string;
     fullname?: string;
-    following?: [];
+    following?: string[];
     username?: string;
     password?: string
     media?: string;
@@ -13,12 +13,7 @@ export interface UserInterface  {
   }
 
   export type UserStore = {
-    user?: {
-      _id?: string;
-      username?: string;
-      media?: string;
-      following?: string[];
-    },
+    user?: UserInterface,
     signOut: () => void,
     updateUser: (user: any, location: string ) => void  
   }
