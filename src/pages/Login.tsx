@@ -6,13 +6,6 @@ import styled from "styled-components";
 import RegisterStyle from "../lib/components/elements/registrationLoginStyle";
 import { sendCookie } from "../functions/userFunctions";
 
-// import {USER, userReducer} from '../store/context/UserContext'
-
-
-// async function getJSON(url: string) {
-//     const res = await fetch(url);
-//     return res.text();
-// }
 
 function Login({ className }: { className?: string }) {
   const usernameRef = useRef<HTMLInputElement>(null);
