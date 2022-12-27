@@ -10,11 +10,11 @@ function Home() {
   return <div style={{ backgroundColor: '#FAFAFA', height: '100vh', overflow: 'hidden' }}>
     {/* <Navbar/> */}
     <UserProvider>
-      <Header />
-      <Suspense>
+      {/* <Header /> */}
+      {/* <Suspense> */}
       <Outlet></Outlet>
 
-      </Suspense>
+      {/* </Suspense> */}
     </UserProvider>
 
   </div>;

@@ -3,7 +3,9 @@ import styled from 'styled-components'
 import { serverUrl } from '../../utils/FileServerIUrl'
 import { UserInterface } from '../../interfaces/interfaces'
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { UserContext, USER, userReducer } from '../../store/context/UserContext';
+// import { UserContext, USER, userReducer } from '../../store/context/UserContext';
+import { UserContext } from '../../store/context/UserContext';
+
 import {useNavigate} from 'react-router-dom'
 
 

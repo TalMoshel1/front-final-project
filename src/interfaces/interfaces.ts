@@ -12,7 +12,7 @@ export interface UserInterface  {
   }
 
   export type UserStore = {
-    user?: UserInterface,
+    user?: UserInterface | undefined,
     signOut: () => void,
     updateUser: (user: any, location: string ) => void  
   }

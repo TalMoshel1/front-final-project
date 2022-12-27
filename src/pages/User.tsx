@@ -12,6 +12,8 @@ import { ChangePropsModal } from "../lib/components/elements/changePropsModal"
 import SettingsIcon from '@mui/icons-material/Settings';
 import { UserInterface } from "../interfaces/interfaces"
 import { follow, unFollow } from "../functions/userFunctions"
+import { Header } from "../lib/components/elements/Header"
+import Navbar from "../lib/components/elements/Navbar"
 
 function User({ user, className }: { user?: {}, className?: string }) {
     const userParams = useParams()
@@ -105,7 +107,9 @@ function User({ user, className }: { user?: {}, className?: string }) {
 
 
 
-    return <div className={className}>
+    return <div>
+        <Navbar/>
+        <div className={className}>
         <section className='userDetails'>
             <div className='usersDetailsChild__profilePic__edit__container'>
                 {userInfo.media ?
@@ -150,6 +154,8 @@ function User({ user, className }: { user?: {}, className?: string }) {
         {(userInfoContext?.user?.username === userInfo.username) && profilePicClicked && <ProfilePicModal toggle={() => { setProfilePicClicked(!profilePicClicked) }} />}
 
     </div>
+    </div>
+    
 }
 
 export default styled(User)`

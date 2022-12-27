@@ -1,29 +1,8 @@
 import Axios from 'axios'
-import { UserInterface } from '../interfaces/interfaces'
-// import {User} from '../interfaces/interfaces'
-// import { useParams } from 'react-router-dom'
-// const userParams = useParams()
+import { UserInterface, UserStore } from '../interfaces/interfaces'
 
+const userInfoUrl = "http://localhost:4000/api/user-info";
 
-// export async function follow(userInfo) {
-//     if (userInfo.username) {
-//         Axios.post('http://localhost:4000/api/login', {
-//             username: userInfo.username && userInfo.username
-//         }, { withCredentials: true })
-//         .then(()=>{
-//             setFollowedByMe(true)
-//         })
-//     }
-// }
-
-// export async function unFollow(userInfo: User, userParams:  Readonly<Params<string>>) {
-//     if (userInfo.username) {
-//         const userId = userParams.id
-//         Axios.post('http://localhost:4000/api/users/unfollow', {
-//             id: userId }, { withCredentials: true })
-//         }
-//         return
-// }
 
 
 export async function setDataSuggestions() {
@@ -56,5 +35,19 @@ export async function unFollow(idToUnFollow: string) {
         window.location.reload()
     })
   }
+}
+
+
+export function sendCookie(usercontext: UserStore) {
+    fetch(userInfoUrl, { credentials: 'include' })
+        .then(async res => {
+            if (res.status !== 200) {
+                usercontext.signOut()
+              return
+            }
+            const data = await res.json()
+            usercontext.updateUser(data, '')
+            localStorage.setItem("user", JSON.stringify(data))
+    })
 }
 

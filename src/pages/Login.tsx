@@ -1,9 +1,13 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext, useReducer } from "react";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../store/context/UserContext";
 import styled from "styled-components";
 import RegisterStyle from "../lib/components/elements/registrationLoginStyle";
+import { sendCookie } from "../functions/userFunctions";
+
+// import {USER, userReducer} from '../store/context/UserContext'
+
 
 // async function getJSON(url: string) {
 //     const res = await fetch(url);
@@ -19,7 +23,7 @@ function Login({ className }: { className?: string }) {
   const navigate = useNavigate();
   const userContext = useContext(UserContext);
   const userInfoUrl = "http://localhost:4000/api/user-info";
-
+//   const [state, dispatch] = useReducer(userReducer,USER)
 
 
   function login() {
@@ -32,11 +36,10 @@ function Login({ className }: { className?: string }) {
       { withCredentials: true }
     )
       .then((res) => {
-        return res;
+        sendCookie(userContext)
+        navigate('/feed')
       })
-      .then((res) => {
-        navigate("/feed");
-      })
+ 
       .catch((err) => {
         if (Array.isArray(err.response.data[0])) {
           setErrors(err.response.data[0]);
@@ -46,9 +49,6 @@ function Login({ className }: { className?: string }) {
       });
   }
 
-  useEffect(() => {
-    // userContext.signOut()
-  }, []);
 
   return (
     <RegisterStyle page="login">

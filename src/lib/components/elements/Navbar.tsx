@@ -20,7 +20,7 @@ import UploadPost from './UploadPost'
 import UploadPostModal from './UploadPostModal'
 import axios from 'axios';
 import LogoutIcon from '@mui/icons-material/Logout';
-import {USER, userReducer} from '../../../store/context/UserContext'
+// import {USER, userReducer} from '../../../store/context/UserContext'
 
 function Navbar({ className }: { className?: string }) {
 
@@ -29,7 +29,7 @@ function Navbar({ className }: { className?: string }) {
     const navigate = useNavigate()
     const userInfo = useContext(UserContext)
     const { user } = useContext(UserContext)
-    const [userState, dispatch] = useReducer(userReducer,USER)
+    // const [state, dispatch] = useReducer(userReducer,USER)
 
     // const memoizeduser = useMemo(()=>{return user}
     // ,[user])
@@ -38,17 +38,12 @@ function Navbar({ className }: { className?: string }) {
     //     console.log(user?._id)
     // }, [user?._id])
 
-    useEffect(()=>{
-        dispatch({type:''})
-        console.log(userState)
-    }, [USER])
         
     async function logout() {
         fetch('http://localhost:4000/api/logout', { credentials: 'include' })
             .then((res) => {
-                console.log(res)
-                dispatch({type:'deleteUser'})
-                // userInfo.signOut()
+                // dispatch({type:'deleteUser'})
+                userInfo.signOut()
                 navigate('/login')
             })
             .catch((err) => {
@@ -67,7 +62,7 @@ function Navbar({ className }: { className?: string }) {
                 <nav className={className}>
                     <div className='navChild'>
                         <div className='h1Container displayNone__phone'>
-                            <h1 className='navChild__child header'><Link to='feed' className='headerLink'>INSTAGRAM</Link></h1>
+                            <h1 className='navChild__child header'><Link to='/feed' className='headerLink'>INSTAGRAM</Link></h1>
                         </div>
                         <div className='navChild__child textField__container'><TextField sx={{ input: { color: '#5b5959' } }} className='textField' label='Search'
                             InputProps={{ startAdornment: <InputAdornment className='input' position='start'><SearchIcon></SearchIcon>Search</InputAdornment> }}> </TextField>

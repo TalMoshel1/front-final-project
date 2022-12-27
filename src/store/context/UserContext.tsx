@@ -10,44 +10,15 @@ import { UserStore } from '../../interfaces/interfaces'
 const userInfoUrl = 'http://localhost:4000/api/user-info'
 
 
+
+
+
+
 export const UserContext = createContext<UserStore>({
   signOut: () => {
     return
-  }, updateUser: (user, location) => { return },
+  }, updateUser: (user, location) => { return }
 })
-
-const getUserFromStorage = (): UserInterface | undefined => {
-    try {
-      const storageUser = localStorage.getItem("user")
-      if (!storageUser) {
-        return
-      }
-      const user = JSON.parse(storageUser) as AxiosResponse
-      return user.data
-    } catch (err) {
-      console.log(err)
-    }
-  }
-  export let USER = getUserFromStorage()
-
-  export function userReducer(state: undefined | UserInterface, action: {type:string, payload?: UserInterface}) {
-    switch(action?.type){
-        case 'deleteUser':
-            localStorage.removeItem('user')
-            USER = undefined
-            // console.log(USER)
-            return undefined
-        case 'updateUser':
-            localStorage.setItem('user', JSON.stringify(action.payload))
-            USER = action.payload
-            console.log(action.payload)
-            // console.log('why is that run')
-            return action.payload
-        default:
-            // console.log(state)
-            return state
-    }   
-  }
 
 const UserProvider = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
 
@@ -68,9 +39,6 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate() // redirect to other components
   const location = useLocation() // react router hook
-  const [state, dispatch]= useReducer(userReducer, USER)
-
-
 
 
   const signOut = () => {
@@ -81,53 +49,57 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
   const updateUser = async (user: UserInterface, location: string) => {
     localStorage.setItem('user', JSON.stringify(user))
     setUser(user)
-    navigate(`/${location}`)
   }
 
   useEffect(() => {
+    console.log('useEffect first line: ',user)
     setLoading(true)
-    if (USER) {
+    if (user) {
+      console.log('has user: ',user)
       setLoading(false)
       return
     }
-    if (location.pathname !== '/login') {
+    console.log('dont have user... so: ')
+    if (location.pathname !== '/login' && location.pathname !== '/register') {
+        console.log('location isnt login and isnt register')
       fetch(userInfoUrl, { credentials: 'include' })
       .then(async res => {
+        console.log('after fetch')
         if (res.status !== 200) {
-            dispatch({type: 'deleteUser'})
-        //   signOut()
+          console.log('status: !== 200')
+          signOut()
           navigate('/register')
           return
         }
+        console.log('still inside then')
         const data = await res.json()
-        // console.log(data)
-        // setUser(data)
-        // localStorage.setItem("user", JSON.stringify(data))
-        dispatch({type:'updateUser', payload: data})
-        console.log(state)
+        console.log('data: ', data)
+        setUser(data)
+        localStorage.setItem("user", JSON.stringify(data))
       }).catch(err => {
-        console.log('catch')
         console.log(err)
-        dispatch({type:'removeUser'})
-        navigate('/register')
+        signOut()
       }).finally(() => {
         setLoading(false)
       })
     }
     else {
-      navigate('/register')
+        console.log('im inside login or register')
+    //   console.log('navigate to register')
+    //   navigate('/register')
     }
    
 
 
-  }, [USER])
+  }, [user])
 
   useEffect(() => {
     if (loading) return
-    if (USER?.username === '' && location.pathname !== '/login') {
+    if (user?.username === '' && location.pathname !== '/login') {
+      console.log('gets in if ************')
       // signOut()
     }
-  }, [location, loading, USER])
+  }, [location, loading, user])
 
   return (
     <UserContext.Provider value={{ user, signOut, updateUser }}>
@@ -139,49 +111,27 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
 export default UserProvider
 
 
-/* 
-hey,
-I have a UserContext component. it return an <Provider value={{ user, signOut, updateUser }}>
+// export const ReduceContext = createContext<UserInterface|undefined|string>(undefined)
 
+// export let USER = getUserFromStorage()
 
- (user is an object witch has type of UserInterface:
+// export function userReducer(state: undefined | UserInterface | string, action: {type:string, payload?: UserInterface | string}) {
+//   switch(action?.type){
+//       case 'deleteUser':
+//           localStorage.removeItem('user')
+//           // USER = undefined
+//           return undefined
+//       case 'updateUser':
+//           localStorage.setItem('user', JSON.stringify(action.payload))
+//           return action.payload
+//       case 'login':
+//           console.log('need to update the state')
+//           return 'login'
+//       default:
+//           return state
+//   }   
+// }
 
-`    _id?: string;
-    fullname?: string;
-    following?: string[];
-    username?: string;
-    password?: string
-    media?: string;
-    email?: string;
-    tokenCreatedAt?: any;
-    created?: Date;
-    __v?: any;`
-
-
-|| undefined.
-
-signOut and updateUser are functions witch using the setUser function hook and removing and setting 'user' in localStorage.
-
-the scenerio thats leads to the problem:
-
-after the user signout(), and login(data) again from the Login component I navigate the user to Feed component, the logic in UserContext updating the user, which I guess need to deliver a new user inside Provider --> <Provider value={{ user: NewUser, signOut, updateUser }}>
-I export the component of UserContext and import it in Navbar, in the latter I use "useContext" hook likt that :
-const {user} = useContext(UserContext), wrote a useEffect which has its dependancy list contains user and in the arrow function I console log the new user, but it doesnt. 
-Navbar Component being rendered all the time, before the user clicks on login():
-```
-    <UserProvider>
-      <Header /> ******** Navbar sits under Header ********
-      <Suspense>
-      <Outlet></Outlet> ***** Feed sits here under Outlet *****
-
-      </Suspense>
-    </UserProvider>
-```
-I think the reason for this to happen, is that the object that being changed from undefined to the UserInterface type with values, is a nested object inside the contextProvider:
-<Provider value={{ user<undefined|UserInterface>, signOut, updateUser }}>
-
-I tried to use memoization for that but failed. I wrote window.location.reload everytime it git new user and I ended up in infinteLoop. 
-and also thought about using usereducer but didnt understood yet how to use it in this case.
-
-
-*/
+// <ReduceContext.Provider value={state}>
+// {children}
+// </ReduceContext.Provider>

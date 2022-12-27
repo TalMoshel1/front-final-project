@@ -13,6 +13,7 @@ import { UserContext } from "../store/context/UserContext";
 import { follow } from "../functions/userFunctions";
 import { UserInterface } from "../interfaces/interfaces";
 import socket from "../utils/socket";
+import Navbar from "../lib/components/elements/Navbar";
 
 async function getJSON(url: string) {
   const res = await fetch(url);
@@ -37,7 +38,7 @@ export function Feed({ className }: { className?: string }) {
   const [userClicked, memoSetUserClicked] = useState<undefined | string>("");
   const [loading, setLoading] = useState(false);
   const [toggleSuggestions, setToggleSuggestions] = useState(false);
-//   const userInfoContext = useContext(UserContext);
+    const userInfoContext = useContext(UserContext);
   const navigate = useNavigate();
   const firstLoad = useRef(false);
   const infinteScrollContainer = useRef<HTMLDivElement>(null);
@@ -51,9 +52,9 @@ export function Feed({ className }: { className?: string }) {
     });
   }, [socket]);
 
-//   useEffect(() => {
-//     console.log("user: ", userInfoContext.user);
-//   }, [userInfoContext.user]);
+    // useEffect(() => {
+    //   console.log("user: ", userInfoContext);
+    // }, [userInfoContext]);
 
   useEffect(() => {
     async function setDataSuggestions() {
@@ -138,55 +139,40 @@ export function Feed({ className }: { className?: string }) {
   }, [posts]);
 
   return (
-    <Style id="feedContainer">
-      {posts && suggestions ? (
-        <Flex>
-          <ListStyle overflow="none">
-            <List direction="column">
-              {posts.map((post) => {
-                return (
-                  <Post
-                    post={post}
-                    setUserClicked={memoSetUserClicked}
-                    postContext="feed"
-                    sizeModal={true}
-                  ></Post>
-                ); // every Post has: _id (unique value of post ID) and author (unique value of USER NAME)
-              })}
-            </List>
-            <div ref={infinteScrollContainer} style={{ height: "50px" }}></div>
-          </ListStyle>
-          <SuggestionsStyle>
-            {toggleSuggestions ? (
-              <div>
-                <h1
-                  onClick={() => {
-                    setToggleSuggestions(!toggleSuggestions);
-                  }}
-                >
-                  close all seggestions
-                </h1>
-                {suggestions.map((sugg: UserInterface, array) => {
+    <div>
+      <Navbar />
+      <Style id="feedContainer">
+        {posts && suggestions ? (
+          <Flex>
+            <ListStyle overflow="none">
+              <List direction="column">
+                {posts.map((post) => {
                   return (
-                    <Suggestion
-                      sugg={sugg}
+                    <Post
+                      post={post}
                       setUserClicked={memoSetUserClicked}
-                      follow={follow}
-                    ></Suggestion>
-                  );
+                      postContext="feed"
+                      sizeModal={true}
+                    ></Post>
+                  ); // every Post has: _id (unique value of post ID) and author (unique value of USER NAME)
                 })}
-              </div>
-            ) : (
-              <div>
-                <h1
-                  onClick={() => {
-                    setToggleSuggestions(!toggleSuggestions);
-                  }}
-                >
-                  see all seggestions
-                </h1>
-                {suggestions.map((sugg, array) => {
-                  if (array <= 4) {
+              </List>
+              <div
+                ref={infinteScrollContainer}
+                style={{ height: "50px" }}
+              ></div>
+            </ListStyle>
+            <SuggestionsStyle>
+              {toggleSuggestions ? (
+                <div>
+                  <h1
+                    onClick={() => {
+                      setToggleSuggestions(!toggleSuggestions);
+                    }}
+                  >
+                    close all seggestions
+                  </h1>
+                  {suggestions.map((sugg: UserInterface, array) => {
                     return (
                       <Suggestion
                         sugg={sugg}
@@ -194,16 +180,37 @@ export function Feed({ className }: { className?: string }) {
                         follow={follow}
                       ></Suggestion>
                     );
-                  }
-                })}
-              </div>
-            )}
-          </SuggestionsStyle>
-        </Flex>
-      ) : (
-        <div>loading</div>
-      )}
-    </Style>
+                  })}
+                </div>
+              ) : (
+                <div>
+                  <h1
+                    onClick={() => {
+                      setToggleSuggestions(!toggleSuggestions);
+                    }}
+                  >
+                    see all seggestions
+                  </h1>
+                  {suggestions.map((sugg, array) => {
+                    if (array <= 4) {
+                      return (
+                        <Suggestion
+                          sugg={sugg}
+                          setUserClicked={memoSetUserClicked}
+                          follow={follow}
+                        ></Suggestion>
+                      );
+                    }
+                  })}
+                </div>
+              )}
+            </SuggestionsStyle>
+          </Flex>
+        ) : (
+          <div>loading</div>
+        )}
+      </Style>
+    </div>
   );
 }
 
