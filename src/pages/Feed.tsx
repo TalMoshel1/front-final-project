@@ -52,9 +52,6 @@ export function Feed({ className }: { className?: string }) {
     });
   }, [socket]);
 
-    // useEffect(() => {
-    //   console.log("user: ", userInfoContext);
-    // }, [userInfoContext]);
 
   useEffect(() => {
     async function setDataSuggestions() {

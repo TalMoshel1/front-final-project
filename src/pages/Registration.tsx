@@ -1,8 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import Axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import RegisterStyle from '../lib/components/elements/registrationLoginStyle'
+import { sendCookie } from "../functions/userFunctions";
+import { UserContext } from "../store/context/UserContext";
+
+
 
 
 
@@ -18,6 +22,9 @@ function Registration({ className }: { className?: string }) {
     const numberOrEmailRef = useRef<HTMLInputElement>(null)
     const navigate = useNavigate()
     const [errors, setErrors] = useState<[] | { message: string }[]>([])
+    // const userContext = useContext(UserContext);
+    const userContext = useContext(UserContext)
+
 
 
     function register() {
@@ -34,6 +41,7 @@ function Registration({ className }: { className?: string }) {
                 }, { withCredentials: true })
             })
             .then(res => {
+                sendCookie(userContext)
                 navigate('/feed')
             })
             .catch(err => {

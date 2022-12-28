@@ -16,8 +16,6 @@ function Login({ className }: { className?: string }) {
   const navigate = useNavigate();
   const userContext = useContext(UserContext);
   const userInfoUrl = "http://localhost:4000/api/user-info";
-//   const [state, dispatch] = useReducer(userReducer,USER)
-
 
   function login() {
     Axios.post(

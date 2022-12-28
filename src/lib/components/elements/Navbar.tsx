@@ -51,6 +51,10 @@ function Navbar({ className }: { className?: string }) {
             })
     }
 
+    useEffect(()=>{
+        console.log(userInfo.user?._id)
+    },[])
+
     
 
 

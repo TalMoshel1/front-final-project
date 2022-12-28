@@ -20,7 +20,6 @@ function Post({ post, setUserClicked, postContext, setPostClicked, className, si
   const [numLikes, addLike] = useState(0);
   const params = useParams();
   const navigate = useNavigate()
-  const fileServerUrl = 'http://localhost:4000'
 
 
   return <div className={className}>

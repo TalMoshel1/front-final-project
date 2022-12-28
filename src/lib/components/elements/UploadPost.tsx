@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import './Navbar.css'
 import { UserContext } from '../../../store/context/UserContext';
 import { serverUrl } from '../../../utils/FileServerIUrl'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Stack, TextField, InputAdornment, Button } from '@mui/material'
 import { createTheme } from '@mui/material'
@@ -11,7 +11,7 @@ import Axios from 'axios';
 import socket from '../../../utils/socket'
 
 
-function UploadPost({ className }: { className?: string }) {
+function UploadPost({ className, toggle }: { className?: string, toggle: ()=>void }) {
     const textArea = useRef<any>(null)
     const userInfoContext = useContext(UserContext)
     const [files, setFiles] = useState<any>('')
@@ -19,6 +19,7 @@ function UploadPost({ className }: { className?: string }) {
     const [dragging, setDragging] = useState(false)
     const [body, setBody] = useState<string>('')
     const navigate = useNavigate()
+    const location = useLocation()
 
 
 
@@ -74,6 +75,7 @@ function UploadPost({ className }: { className?: string }) {
                 Axios(config)
                     .then((res) => {
                         socket.emit('send_post', { message: res })
+                        navigate(location.pathname)
                     })
                     .catch((error) => {
                         console.log(error)
@@ -92,7 +94,7 @@ function UploadPost({ className }: { className?: string }) {
         <div>
             <textarea rows={5} ref={textArea}></textarea>
         </div>
-        <button type="button" onClick={() => { submitForm() }}>Publish</button>
+        <button type="button" onClick={() => { submitForm(); toggle() }}>Publish</button>
     </form>
 }
 

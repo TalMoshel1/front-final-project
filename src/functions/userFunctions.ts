@@ -16,7 +16,6 @@ export const x = '1'
 
 export async function follow(idToFollow: string) {
   if (idToFollow) {
-    console.log(idToFollow)
     return Axios.post('http://localhost:4000/api/users/follow', {
       id: idToFollow
     }, { withCredentials: true })
@@ -46,7 +45,7 @@ export function sendCookie(usercontext: UserStore) {
               return
             }
             const data = await res.json()
-            usercontext.updateUser(data, '')
+            usercontext.updateUser(data)
             localStorage.setItem("user", JSON.stringify(data))
     })
 }

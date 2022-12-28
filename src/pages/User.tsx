@@ -54,7 +54,6 @@ function User({ user, className }: { user?: {}, className?: string }) {
             }).then((res) => {
                 return res.json()
             }).then((res) => {
-                console.log(res)
                 setPosts(res)
             })
             .catch((err) => {
@@ -76,7 +75,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
     async function toFollow() {
         if (userInfo.username) {
             const updatedUser = await follow(userInfo._id)
-            userInfoContext.updateUser(updatedUser, 'feed')
+            userInfoContext.updateUser(updatedUser)
             setFollowedByMe(true)
                 
         }
@@ -86,7 +85,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
     async function toUnFollow() {
         if (userInfo.username) {
             const updatedUser = await unFollow(userInfo._id)
-            userInfoContext.updateUser(updatedUser, 'feed')
+            userInfoContext.updateUser(updatedUser)
             setFollowedByMe(false)
         }
         return
@@ -99,9 +98,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
         }
     }, [postClicked])
 
-    useEffect(()=>{
-        console.log(postClicked)
-    },[postClicked])
+
 
 
 

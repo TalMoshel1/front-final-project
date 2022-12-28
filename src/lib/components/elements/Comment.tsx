@@ -6,7 +6,6 @@ function Comment({ className }: { className?: string }) {
     let messageValue = useRef<any>(null)
     function updateMessage(e: any) {
         messageValue.current = e.target.value
-        console.log(messageValue.current)
         return
     }
 
