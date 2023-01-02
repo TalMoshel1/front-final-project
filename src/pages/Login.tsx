@@ -1,10 +1,17 @@
-import React, { useEffect, useState, useRef, useContext, useReducer } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  useReducer,
+} from "react";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../store/context/UserContext";
 import styled from "styled-components";
 import RegisterStyle from "../lib/components/elements/registrationLoginStyle";
 import { sendCookie } from "../functions/userFunctions";
+import Cookies from 'universal-cookie';
 
 
 function Login({ className }: { className?: string }) {
@@ -26,11 +33,14 @@ function Login({ className }: { className?: string }) {
       },
       { withCredentials: true }
     )
-      .then((res) => {
-        sendCookie(userContext)
-        navigate('/feed')
+      .then((res: any) => {
+        const cookies = new Cookies();
+        cookies.set('cookieInsta', res.token, res.options)
       })
- 
+      .then((res) => {
+        sendCookie(userContext);
+        navigate("/feed");
+      })
       .catch((err) => {
         if (Array.isArray(err.response.data[0])) {
           setErrors(err.response.data[0]);
@@ -39,7 +49,6 @@ function Login({ className }: { className?: string }) {
         }
       });
   }
-
 
   return (
     <RegisterStyle page="login">
