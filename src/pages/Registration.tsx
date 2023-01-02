@@ -34,6 +34,10 @@ function Registration({ className }: { className?: string }) {
             fullname: fullnameRef.current?.value,
             email: numberOrEmailRef.current?.value
         })
+        .then((res)=>{
+            console.log('register is done susccefully')
+            return res
+        })
             .then(res => {
                 return Axios.post(`${process.env.REACT_APP_API}/api/login`, {
                     username: usernameRef.current?.value,
