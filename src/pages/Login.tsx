@@ -15,11 +15,11 @@ function Login({ className }: { className?: string }) {
   const [isShowPassword, setisShowPassword] = useState(false);
   const navigate = useNavigate();
   const userContext = useContext(UserContext);
-  const userInfoUrl = "http://localhost:4000/api/user-info";
+  const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 
   function login() {
     Axios.post(
-      "http://localhost:4000/api/login",
+      `${process.env.REACT_APP_API}/api/login`,
       {
         username: usernameRef.current?.value || "",
         password: passwordRef.current?.value || "",

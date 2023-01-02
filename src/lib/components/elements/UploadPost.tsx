@@ -64,7 +64,7 @@ function UploadPost({ className, toggle }: { className?: string, toggle: ()=>voi
                 data.append('body', body)
                 const config = {
                     method: 'post',
-                    url: `http://localhost:4000/api/post`,
+                    url: `${process.env.REACT_APP_API}/api/post`,
                     data: data,
                     body: body,
                     withCredentials: true,

@@ -55,7 +55,7 @@ export function Feed({ className }: { className?: string }) {
 
   useEffect(() => {
     async function setDataSuggestions() {
-      fetch("http://localhost:4000/api/suggestions/feed", {
+      fetch(`${process.env.REACT_APP_API}/api/suggestions/feed`, {
         credentials: "include",
       })
         .then((res) => {
@@ -78,7 +78,7 @@ export function Feed({ className }: { className?: string }) {
     async function setDataPosts() {
       setLoading(true);
       firstLoad.current = true;
-      fetch(`http://localhost:4000/api/post/feed?offset=${page}`, {
+      fetch(`${process.env.REACT_APP_API}/api/post/feed?offset=${page}`, {
         credentials: "include",
         signal: controller.signal,
       })

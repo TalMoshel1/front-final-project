@@ -31,7 +31,7 @@ function Post({ post, setUserClicked, postContext, setPostClicked, className, si
             <div className='profilePic__container'>
               {post.author.media ?
                 <img className='profile__img' src={`${serverUrl}/${post.author.media}`} /> :
-                <img className='profile__img' src={`http://localhost:4000/uploads/search-grey-1.png`} />
+                <img className='profile__img' src={`${process.env.REACT_APP_API}/uploads/search-grey-1.png`} />
               }
             </div>
             <div className='h1__container'>

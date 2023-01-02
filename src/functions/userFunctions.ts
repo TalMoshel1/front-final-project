@@ -1,12 +1,12 @@
 import Axios from 'axios'
 import { UserInterface, UserStore } from '../interfaces/interfaces'
 
-const userInfoUrl = "http://localhost:4000/api/user-info";
+const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 
 
 
 export async function setDataSuggestions() {
-  return fetch('http://localhost:4000/api/suggestions/feed', { credentials: 'include' })
+  return fetch(`${process.env.REACT_APP_API}/api/suggestions/feed`, { credentials: 'include' })
 }
 
 export const x = '1'
@@ -16,7 +16,7 @@ export const x = '1'
 
 export async function follow(idToFollow: string) {
   if (idToFollow) {
-    return Axios.post('http://localhost:4000/api/users/follow', {
+    return Axios.post(`${process.env.REACT_APP_API}/api/users/follow`, {
       id: idToFollow
     }, { withCredentials: true })
     .then(()=>{
@@ -27,7 +27,7 @@ export async function follow(idToFollow: string) {
 
 export async function unFollow(idToUnFollow: string) {
   if (idToUnFollow) {
-    Axios.post('http://localhost:4000/api/users/unfollow', {
+    Axios.post(`${process.env.REACT_APP_API}/api/users/unfollow`, {
       id: idToUnFollow
     }, { withCredentials: true })
     .then(()=>{

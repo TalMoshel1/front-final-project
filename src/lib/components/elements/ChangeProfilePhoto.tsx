@@ -29,7 +29,7 @@ function ChangeProfilePhoto({ className, toggle }: { className?: string, toggle:
       data.append('media', file);
       const config = {
         method: 'put',
-        url: `http://localhost:4000/api/user/${userInfoContext.user?._id}`,
+        url: `${process.env.REACT_APP_API}/api/user/${userInfoContext.user?._id}`,
         data: data,
         withCredentials: true,
         headers: {
@@ -48,7 +48,7 @@ function ChangeProfilePhoto({ className, toggle }: { className?: string, toggle:
           console.log(error)
         });
     } else if (file === 'delete') {
-      Axios.put(`http://localhost:4000/api/user/${userInfoContext.user?._id}`, { media: 'shushu' })
+      Axios.put(`${process.env.REACT_APP_API}/api/user/${userInfoContext.user?._id}`, { media: 'shushu' })
         .then((updatedUser) => {
           if (updatedUser) {
             const userInfo = updatedUser.data

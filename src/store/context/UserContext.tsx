@@ -7,7 +7,7 @@ import { setFlagsFromString } from "v8";
 import { UserInterface } from '../../interfaces/interfaces'
 import { UserStore } from '../../interfaces/interfaces'
 
-const userInfoUrl = 'http://localhost:4000/api/user-info'
+const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`
 
 
 

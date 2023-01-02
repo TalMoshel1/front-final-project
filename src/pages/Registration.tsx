@@ -28,14 +28,14 @@ function Registration({ className }: { className?: string }) {
 
 
     function register() {
-        Axios.post('http://localhost:4000/api/register', {
+        Axios.post(`${process.env.REACT_APP_API}/api/register`, {
             username: usernameRef.current?.value,
             password: passwordRef.current?.value,
             fullname: fullnameRef.current?.value,
             email: numberOrEmailRef.current?.value
         })
             .then(res => {
-                return Axios.post('http://localhost:4000/api/login', {
+                return Axios.post(`${process.env.REACT_APP_API}/api/login`, {
                     username: usernameRef.current?.value,
                     password: passwordRef.current?.value
                 }, { withCredentials: true })
