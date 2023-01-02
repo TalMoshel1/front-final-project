@@ -1,8 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import Axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import RegisterStyle from '../lib/components/elements/registrationLoginStyle'
+import { sendCookie } from "../functions/userFunctions";
+import { UserContext } from "../store/context/UserContext";
+
+
 
 
 
@@ -18,22 +22,26 @@ function Registration({ className }: { className?: string }) {
     const numberOrEmailRef = useRef<HTMLInputElement>(null)
     const navigate = useNavigate()
     const [errors, setErrors] = useState<[] | { message: string }[]>([])
+    // const userContext = useContext(UserContext);
+    const userContext = useContext(UserContext)
+
 
 
     function register() {
-        Axios.post('http://localhost:4000/api/register', {
+        Axios.post(`${process.env.REACT_APP_API}/api/register`, {
             username: usernameRef.current?.value,
             password: passwordRef.current?.value,
             fullname: fullnameRef.current?.value,
             email: numberOrEmailRef.current?.value
         })
             .then(res => {
-                return Axios.post('http://localhost:4000/api/login', {
+                return Axios.post(`${process.env.REACT_APP_API}/api/login`, {
                     username: usernameRef.current?.value,
                     password: passwordRef.current?.value
                 }, { withCredentials: true })
             })
             .then(res => {
+                sendCookie(userContext)
                 navigate('/feed')
             })
             .catch(err => {

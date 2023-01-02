@@ -34,7 +34,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
         const signal = controller.signal
         const userId = userParams.id
         const searchUserAPI = async () => { }
-        fetch(`http://localhost:4000/api/user/${userId}`, { signal, credentials: 'include', mode: 'cors', })
+        fetch(`${process.env.REACT_APP_API}/api/user/${userId}`, { signal, credentials: 'include', mode: 'cors', })
             .then((res) => {
                 return res.json()
             })
@@ -50,11 +50,10 @@ function User({ user, className }: { user?: {}, className?: string }) {
                 return res
             })
             .then((user) => {
-                return fetch(`http://localhost:4000/api/posts/${user.username}`, { credentials: 'include', mode: 'cors', })
+                return fetch(`${process.env.REACT_APP_API}/api/posts/${user.username}`, { credentials: 'include', mode: 'cors', })
             }).then((res) => {
                 return res.json()
             }).then((res) => {
-                console.log(res)
                 setPosts(res)
             })
             .catch((err) => {
@@ -76,7 +75,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
     async function toFollow() {
         if (userInfo.username) {
             const updatedUser = await follow(userInfo._id)
-            userInfoContext.updateUser(updatedUser, 'feed')
+            userInfoContext.updateUser(updatedUser)
             setFollowedByMe(true)
                 
         }
@@ -86,7 +85,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
     async function toUnFollow() {
         if (userInfo.username) {
             const updatedUser = await unFollow(userInfo._id)
-            userInfoContext.updateUser(updatedUser, 'feed')
+            userInfoContext.updateUser(updatedUser)
             setFollowedByMe(false)
         }
         return
@@ -99,9 +98,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
         }
     }, [postClicked])
 
-    useEffect(()=>{
-        console.log(postClicked)
-    },[postClicked])
+
 
 
 
@@ -114,7 +111,7 @@ function User({ user, className }: { user?: {}, className?: string }) {
             <div className='usersDetailsChild__profilePic__edit__container'>
                 {userInfo.media ?
                     <img className='profilePic' src={`${serverUrl}/${userInfo.media}`} onClick={() => { setProfilePicClicked(!profilePicClicked); }} /> :
-                    <img className='profilePic' src={`http://localhost:4000/uploads/search-grey-1.png`} onClick={() => { setProfilePicClicked(!profilePicClicked); }} />
+                    <img className='profilePic' src={`${process.env.REACT_APP_API}/uploads/search-grey-1.png`} onClick={() => { setProfilePicClicked(!profilePicClicked); }} />
                 }
                 <div className='justifyContentCenter'>
                     <div className='flexRow'>

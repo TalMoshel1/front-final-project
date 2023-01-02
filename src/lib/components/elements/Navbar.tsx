@@ -40,7 +40,7 @@ function Navbar({ className }: { className?: string }) {
 
         
     async function logout() {
-        fetch('http://localhost:4000/api/logout', { credentials: 'include' })
+        fetch(`${process.env.REACT_APP_API}/api/logout`, { credentials: 'include' })
             .then((res) => {
                 // dispatch({type:'deleteUser'})
                 userInfo.signOut()
@@ -50,6 +50,10 @@ function Navbar({ className }: { className?: string }) {
                 console.log(err)
             })
     }
+
+    useEffect(()=>{
+        console.log(userInfo.user?._id)
+    },[])
 
     
 
@@ -76,7 +80,7 @@ function Navbar({ className }: { className?: string }) {
                             <li><FavoriteBorderIcon className='navbarIcon__style' /></li>
                             <li className='ulChild__imgContainer navbarIcon__style'>{userInfo?.user?.media ?
                                 <Link to={`/user/${userInfo.user?._id}`}><img className='icon_img_smallfont' src={`${serverUrl}/${userInfo?.user?.media}`} /></Link> :
-                                <Link to={`/user/${userInfo.user?._id}`}><img className='icon_img_smallfont' src={`http://localhost:4000/uploads/search-grey-1.png`} /></Link>}
+                                <Link to={`/user/${userInfo.user?._id}`}><img className='icon_img_smallfont' src={`${process.env.REACT_APP_API}/uploads/search-grey-1.png`} /></Link>}
                             </li>
                         </ul>
                     </div>

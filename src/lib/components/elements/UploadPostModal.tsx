@@ -18,7 +18,7 @@ function UploadPostModal({ className, toggle }: { className?: string, toggle: ()
         }} onClick={()=>{toggle(); }}>
 
         </div>
-        <UploadPost />
+        <UploadPost toggle={toggle}/>
     </>
 }
 

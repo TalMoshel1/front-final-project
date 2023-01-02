@@ -7,7 +7,7 @@ import { setFlagsFromString } from "v8";
 import { UserInterface } from '../../interfaces/interfaces'
 import { UserStore } from '../../interfaces/interfaces'
 
-const userInfoUrl = 'http://localhost:4000/api/user-info'
+const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`
 
 
 
@@ -17,7 +17,7 @@ const userInfoUrl = 'http://localhost:4000/api/user-info'
 export const UserContext = createContext<UserStore>({
   signOut: () => {
     return
-  }, updateUser: (user, location) => { return }
+  }, updateUser: (user) => { return }
 })
 
 const UserProvider = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
@@ -46,34 +46,35 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
     setUser(undefined)
   }
 
-  const updateUser = async (user: UserInterface, location: string) => {
+  const updateUser = async (user: UserInterface) => {
     localStorage.setItem('user', JSON.stringify(user))
     setUser(user)
+
   }
 
   useEffect(() => {
-    console.log('useEffect first line: ',user)
+    console.log(user)
+    console.log(location.pathname)
     setLoading(true)
     if (user) {
-      console.log('has user: ',user)
       setLoading(false)
+      if (location.pathname === '/') {
+        navigate('/feed')
+
+      } else {
+        navigate(location.pathname)
+      }
       return
     }
-    console.log('dont have user... so: ')
     if (location.pathname !== '/login' && location.pathname !== '/register') {
-        console.log('location isnt login and isnt register')
       fetch(userInfoUrl, { credentials: 'include' })
       .then(async res => {
-        console.log('after fetch')
         if (res.status !== 200) {
-          console.log('status: !== 200')
           signOut()
           navigate('/register')
           return
         }
-        console.log('still inside then')
         const data = await res.json()
-        console.log('data: ', data)
         setUser(data)
         localStorage.setItem("user", JSON.stringify(data))
       }).catch(err => {
@@ -83,23 +84,16 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
         setLoading(false)
       })
     }
-    else {
-        console.log('im inside login or register')
-    //   console.log('navigate to register')
-    //   navigate('/register')
-    }
-   
-
 
   }, [user])
 
-  useEffect(() => {
-    if (loading) return
-    if (user?.username === '' && location.pathname !== '/login') {
-      console.log('gets in if ************')
-      // signOut()
-    }
-  }, [location, loading, user])
+//   useEffect(() => {
+//     if (loading) return
+//     if (user?.username === '' && location.pathname !== '/login') {
+//       console.log('gets in if ************')
+//       // signOut()
+//     }
+//   }, [location, loading, user])
 
   return (
     <UserContext.Provider value={{ user, signOut, updateUser }}>

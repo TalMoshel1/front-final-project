@@ -1,22 +1,21 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { userInfo } from 'os';
 import styled from 'styled-components'
 import { UserContext } from '../../../store/context/UserContext';
 import axios from 'axios';
 import Axios from 'axios'
-import socket from '../../../utils/socket'
 
 
 function ChangeProfilePhoto({ className, toggle }: { className?: string, toggle: () => void }) {
   const userInfoContext = useContext(UserContext)
   const fileInput = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState('')
+  const navigate = useNavigate()
 
   function SetFileState(e: any) {
     try {
       const file = e.target.files[0]
-      console.log(file)
       setFile(file)
       return
     }
@@ -30,7 +29,7 @@ function ChangeProfilePhoto({ className, toggle }: { className?: string, toggle:
       data.append('media', file);
       const config = {
         method: 'put',
-        url: `http://localhost:4000/api/user/${userInfoContext.user?._id}`,
+        url: `${process.env.REACT_APP_API}/api/user/${userInfoContext.user?._id}`,
         data: data,
         withCredentials: true,
         headers: {
@@ -41,18 +40,19 @@ function ChangeProfilePhoto({ className, toggle }: { className?: string, toggle:
         .then((updatedUser) => {
           if (updatedUser) {
             const userInfo = updatedUser.data
-            userInfoContext.updateUser(userInfo, `user/${userInfo._id}`)
+            userInfoContext.updateUser(userInfo)
             toggle()
+            navigate(`/user/${userInfo._id}`)
           } 
         }).catch((error) => {
           console.log(error)
         });
     } else if (file === 'delete') {
-      Axios.put(`http://localhost:4000/api/user/${userInfoContext.user?._id}`, { media: 'shushu' })
+      Axios.put(`${process.env.REACT_APP_API}/api/user/${userInfoContext.user?._id}`, { media: 'shushu' })
         .then((updatedUser) => {
           if (updatedUser) {
             const userInfo = updatedUser.data
-            userInfoContext.updateUser(userInfo, `user/${userInfo._id}`)
+            userInfoContext.updateUser(userInfo)
           } 
         }).catch((error) => {
           console.log(error)
