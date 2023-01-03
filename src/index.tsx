@@ -15,7 +15,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-
+console.log(process.env.REACT_APP_ENV)
 root.render(
   <React.StrictMode>
     <HashRouter>
