@@ -12,6 +12,8 @@ async function getJSON(url: string) {
   return res.text();
 }
 
+console.log('???')
+
 function Registration({ className }: { className?: string }) {
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
