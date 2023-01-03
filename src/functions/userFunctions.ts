@@ -46,6 +46,8 @@ export function sendCookie(usercontext: UserStore) {
             }
             const data = await res.json()
             usercontext.updateUser(data)
+            console.log('updated the user')
+            console.log('the user: ', data)
             localStorage.setItem("user", JSON.stringify(data))
     })
 }
