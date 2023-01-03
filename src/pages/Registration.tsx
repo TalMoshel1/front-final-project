@@ -24,7 +24,7 @@ function Registration({ className }: { className?: string }) {
   const userContext = useContext(UserContext);
 
   function register() {
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.REACT_APP_ENV === "production") {
       Axios.post(`${process.env.REACT_APP_API}/api/register`, {
         username: usernameRef.current?.value,
         password: passwordRef.current?.value,
