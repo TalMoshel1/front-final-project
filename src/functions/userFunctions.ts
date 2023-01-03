@@ -1,5 +1,7 @@
 import Axios from 'axios'
 import { UserInterface, UserStore } from '../interfaces/interfaces'
+import Cookies from 'universal-cookie';
+
 
 const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 
@@ -8,9 +10,6 @@ const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 export async function setDataSuggestions() {
   return fetch(`${process.env.REACT_APP_API}/api/suggestions/feed`, { credentials: 'include' })
 }
-
-export const x = '1'
-
 
 
 
@@ -48,6 +47,12 @@ export function sendCookie(usercontext: UserStore) {
             usercontext.updateUser(data)
             localStorage.setItem("user", JSON.stringify(data))
     })
+}
+
+export function getCookie() {
+    const cookies = new Cookies();
+    const cookie = cookies.get('cookieInsta2', {doNotParse: false})
+    return cookie
 }
 
 

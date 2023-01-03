@@ -10,8 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../store/context/UserContext";
 import styled from "styled-components";
 import RegisterStyle from "../lib/components/elements/registrationLoginStyle";
-import { sendCookie } from "../functions/userFunctions";
+import { getCookie, sendCookie } from "../functions/userFunctions";
 import Cookies from 'universal-cookie';
+
 
 
 function Login({ className }: { className?: string }) {
@@ -25,30 +26,47 @@ function Login({ className }: { className?: string }) {
   const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 
   function login() {
-    Axios.post(
-      `${process.env.REACT_APP_API}/api/login`,
-      {
-        username: usernameRef.current?.value || "",
-        password: passwordRef.current?.value || "",
-      },
-      { withCredentials: true }
-    )
-      .then((res: any) => {
-        console.log(res.data.token)
-        const cookies = new Cookies();
-        cookies.set('cookieInsta', res.data.token)
-      })
-      .then((res) => {
-        sendCookie(userContext);
-        navigate("/feed");
-      })
-      .catch((err) => {
-        if (Array.isArray(err.response.data[0])) {
-          setErrors(err.response.data[0]);
-        } else {
-          setErrors([err.response.data[0]]);
-        }
-      });
+    if (process.env.NODE_ENV==='development') {
+        Axios.post(
+            `${process.env.REACT_APP_API}/api/login`,
+            {
+              username: usernameRef.current?.value || "",
+              password: passwordRef.current?.value || "",
+            },
+            { withCredentials: true }
+          ).then((res)=>{
+            sendCookie(userContext)
+          }).then(()=>{
+              navigate("/feed");
+            })
+            .catch((err) => {
+              if (Array.isArray(err.response.data[0])) {
+                setErrors(err.response.data[0]);
+              } else {
+                setErrors([err.response.data[0]]);
+              }
+            });
+    } else {
+        Axios.post(
+            `${process.env.REACT_APP_API}/api/loginNoAuth`,
+            {
+              username: usernameRef.current?.value || "",
+              password: passwordRef.current?.value || "",
+            },
+            { withCredentials: true }
+          ).then((res)=>{
+            userContext.updateUser(res)
+          }).then(()=>{
+              navigate("/feed");
+            })
+            .catch((err) => {
+              if (Array.isArray(err.response.data[0])) {
+                setErrors(err.response.data[0]);
+              } else {
+                setErrors([err.response.data[0]]);
+              }
+            });
+    }
   }
 
   return (
