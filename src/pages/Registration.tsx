@@ -5,9 +5,7 @@ import styled from 'styled-components';
 import RegisterStyle from '../lib/components/elements/registrationLoginStyle'
 import { sendCookie } from "../functions/userFunctions";
 import { UserContext } from "../store/context/UserContext";
-
-
-
+import Cookies from 'universal-cookie';
 
 
 async function getJSON(url: string) {
@@ -22,9 +20,7 @@ function Registration({ className }: { className?: string }) {
     const numberOrEmailRef = useRef<HTMLInputElement>(null)
     const navigate = useNavigate()
     const [errors, setErrors] = useState<[] | { message: string }[]>([])
-    // const userContext = useContext(UserContext);
     const userContext = useContext(UserContext)
-
 
 
     function register() {
@@ -37,21 +33,21 @@ function Registration({ className }: { className?: string }) {
         .then((res)=>{
             console.log('register is done susccefully')
             return res
-        })
-            .then(res => {
+        }).then(res => {
                 return Axios.post(`${process.env.REACT_APP_API}/api/login`, {
                     username: usernameRef.current?.value,
                     password: passwordRef.current?.value
                 }, { withCredentials: true })
             })
             .then(res => {
+                const cookies = new Cookies();
+                cookies.set('cookieInsta', res.data.token)
                 sendCookie(userContext)
                 navigate('/feed')
             })
             .catch(err => {
                 console.log(err)
                 setErrors(err.response.data)
-
             })
     }
 

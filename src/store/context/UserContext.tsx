@@ -49,7 +49,6 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
   const updateUser = async (user: UserInterface) => {
     localStorage.setItem('user', JSON.stringify(user))
     setUser(user)
-
   }
 
   useEffect(() => {

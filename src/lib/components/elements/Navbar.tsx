@@ -21,6 +21,8 @@ import UploadPostModal from './UploadPostModal'
 import axios from 'axios';
 import LogoutIcon from '@mui/icons-material/Logout';
 // import {USER, userReducer} from '../../../store/context/UserContext'
+import Cookies from 'universal-cookie';
+
 
 function Navbar({ className }: { className?: string }) {
 
@@ -42,7 +44,8 @@ function Navbar({ className }: { className?: string }) {
     async function logout() {
         fetch(`${process.env.REACT_APP_API}/api/logout`, { credentials: 'include' })
             .then((res) => {
-                // dispatch({type:'deleteUser'})
+                const cookies = new Cookies();
+                cookies.remove('cookieInsta')
                 userInfo.signOut()
                 navigate('/login')
             })
