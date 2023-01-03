@@ -35,8 +35,8 @@ function Login({ className }: { className?: string }) {
     )
       .then((res: any) => {
         const cookies = new Cookies();
-        console.log(res.token, ' ', res.options)
-        cookies.set('cookieInsta', res.token, res.options)
+        console.log(res)
+        // cookies.set('cookieInsta', res.token, res.options)
       })
       .then((res) => {
         sendCookie(userContext);
