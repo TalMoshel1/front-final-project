@@ -59,32 +59,31 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
       setLoading(false)
       if (location.pathname === '/') {
         navigate('/feed')
-
       } else {
         navigate(location.pathname)
       }
       return
     }
     if (location.pathname !== '/login' && location.pathname !== '/register') {
-      fetch(userInfoUrl, { credentials: 'include' })
-      .then(async res => {
-        if (res.status !== 200) {
-          signOut()
-          navigate('/register')
-          return
-        }
-        const data = await res.json()
-        setUser(data)
-        localStorage.setItem("user", JSON.stringify(data))
-      }).catch(err => {
-        console.log(err)
-        signOut()
-      }).finally(() => {
-        setLoading(false)
-      })
-    }
-
-  }, [user])
+        if (process.env.NODE_ENV === 'development') {
+            fetch(userInfoUrl, { credentials: 'include' })
+            .then(async res => {
+              if (res.status !== 200) {
+                signOut()
+                navigate('/register')
+                return
+              }
+              const data = await res.json()
+              setUser(data)
+              localStorage.setItem("user", JSON.stringify(data))
+            }).catch(err => {
+              console.log(err)
+              signOut()
+            }).finally(() => {
+              setLoading(false)
+            })
+    }}
+  }, [user]) 
 
 //   useEffect(() => {
 //     if (loading) return
