@@ -65,7 +65,7 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
       return
     }
     if (location.pathname !== '/login' && location.pathname !== '/register') {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.REACT_APP_ENV === 'development') {
             fetch(userInfoUrl, { credentials: 'include' })
             .then(async res => {
               if (res.status !== 200) {

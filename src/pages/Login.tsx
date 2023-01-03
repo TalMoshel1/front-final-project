@@ -26,7 +26,7 @@ function Login({ className }: { className?: string }) {
   const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 
   function login() {
-    if (process.env.NODE_ENV==='development') {
+    if (process.env.REACT_APP_ENV==='development') {
         Axios.post(
             `${process.env.REACT_APP_API}/api/login`,
             {
