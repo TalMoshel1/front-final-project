@@ -26,7 +26,7 @@ function Login({ className }: { className?: string }) {
   const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 
   function login() {
-    if (process.env.REACT_APP_ENV==='development') {
+    if (process.env.REACT_APP_ENV===undefined) {
         Axios.post(
             `${process.env.REACT_APP_API}/api/login`,
             {
@@ -46,7 +46,7 @@ function Login({ className }: { className?: string }) {
                 setErrors([err.response.data[0]]);
               }
             });
-    } else {
+    } else if (process.env.REACT_APP_ENV==='prodcution') {
         Axios.post(
             `${process.env.REACT_APP_API}/api/loginNoAuth`,
             {
