@@ -69,6 +69,7 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
             fetch(userInfoUrl, { credentials: 'include' })
             .then(async res => {
               if (res.status !== 200) {
+                console.log('something happening because of verify user')
                 signOut()
                 navigate('/register')
                 return
