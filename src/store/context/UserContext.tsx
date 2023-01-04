@@ -83,7 +83,8 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
             }).finally(() => {
               setLoading(false)
             })
-    }}
+    }
+console.log('pass the if and gets here')}
   }, [user]) 
 
 //   useEffect(() => {
