@@ -25,6 +25,7 @@ function Registration({ className }: { className?: string }) {
 
   function register() {
     if (process.env.REACT_APP_ENV === "production") {
+        console.log('production mode')
       Axios.post(`${process.env.REACT_APP_API}/api/register`, {
         username: usernameRef.current?.value,
         password: passwordRef.current?.value,
@@ -56,6 +57,7 @@ function Registration({ className }: { className?: string }) {
           setErrors(err.response.data);
         });
     } else {
+      console.log('development mode')
       Axios.post(`${process.env.REACT_APP_API}/api/register`, {
         username: usernameRef.current?.value,
         password: passwordRef.current?.value,

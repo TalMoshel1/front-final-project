@@ -69,6 +69,7 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
             fetch(userInfoUrl, { credentials: 'include' })
             .then(async res => {
               if (res.status !== 200) {
+                console.log('something happening because of verify user')
                 signOut()
                 navigate('/register')
                 return
@@ -82,7 +83,8 @@ const UserProvider = ({ children }: { children: React.ReactElement | React.React
             }).finally(() => {
               setLoading(false)
             })
-    }}
+    }
+console.log('pass the if and gets here')}
   }, [user]) 
 
 //   useEffect(() => {
