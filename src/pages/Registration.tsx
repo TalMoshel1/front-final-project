@@ -22,31 +22,25 @@ function Registration({ className }: { className?: string }) {
   const userContext = useContext(UserContext);
 
   function register() {
-      Axios.post(`${process.env.REACT_APP_API}/api/register`, {
+    Axios.post(`${process.env.REACT_APP_API}/api/register`, {
         username: usernameRef.current?.value,
         password: passwordRef.current?.value,
         fullname: fullnameRef.current?.value,
         email: numberOrEmailRef.current?.value,
       })
         .then((res) => {
-          console.log("register is done susccefully");
-          return res;
-        })
-        .then((res) => {
           return Axios.post(
-            `${process.env.REACT_APP_API}/api/loginNoAuth`,
+            `${process.env.REACT_APP_API}/api/login`,
             {
               username: usernameRef.current?.value,
               password: passwordRef.current?.value,
             },
             { withCredentials: true }
           );
-        })
-        .then((res) => {
-          userContext.updateUser(res);
-        })
-        .then(() => {
-          navigate("/feed");
+        }).then((res)=>{
+            console.log('registration work')
+
+            sendCookie(userContext)
         })
         .catch((err) => {
           console.log(err);

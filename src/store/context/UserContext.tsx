@@ -54,8 +54,6 @@ const UserProvider = ({
   };
 
   useEffect(() => {
-    console.log(user);
-    console.log(location.pathname);
     setLoading(true);
     if (user) {
       setLoading(false);
@@ -88,13 +86,6 @@ const UserProvider = ({
     }
   }, [user]);
 
-  //   useEffect(() => {
-  //     if (loading) return
-  //     if (user?.username === '' && location.pathname !== '/login') {
-  //       console.log('gets in if ************')
-  //       // signOut()
-  //     }
-  //   }, [location, loading, user])
 
   return (
     <UserContext.Provider value={{ user, signOut, updateUser }}>
@@ -105,27 +96,4 @@ const UserProvider = ({
 
 export default UserProvider;
 
-// export const ReduceContext = createContext<UserInterface|undefined|string>(undefined)
 
-// export let USER = getUserFromStorage()
-
-// export function userReducer(state: undefined | UserInterface | string, action: {type:string, payload?: UserInterface | string}) {
-//   switch(action?.type){
-//       case 'deleteUser':
-//           localStorage.removeItem('user')
-//           // USER = undefined
-//           return undefined
-//       case 'updateUser':
-//           localStorage.setItem('user', JSON.stringify(action.payload))
-//           return action.payload
-//       case 'login':
-//           console.log('need to update the state')
-//           return 'login'
-//       default:
-//           return state
-//   }
-// }
-
-// <ReduceContext.Provider value={state}>
-// {children}
-// </ReduceContext.Provider>
