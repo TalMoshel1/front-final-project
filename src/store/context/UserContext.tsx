@@ -4,104 +4,106 @@ import { type } from "os";
 import { createContext, useState, useEffect, useReducer } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setFlagsFromString } from "v8";
-import { UserInterface } from '../../interfaces/interfaces'
-import { UserStore } from '../../interfaces/interfaces'
+import { UserInterface } from "../../interfaces/interfaces";
+import { UserStore } from "../../interfaces/interfaces";
 
-const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`
-
-
-
-
-
+const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 
 export const UserContext = createContext<UserStore>({
   signOut: () => {
-    return
-  }, updateUser: (user) => { return }
-})
+    return;
+  },
+  updateUser: (user) => {
+    return;
+  },
+});
 
-const UserProvider = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
-
+const UserProvider = ({
+  children,
+}: {
+  children: React.ReactElement | React.ReactElement[];
+}) => {
   const getUserFromStorage = (): UserInterface | undefined => {
     try {
-      const storageUser = localStorage.getItem("user")
+      const storageUser = localStorage.getItem("user");
       if (!storageUser) {
-        return
+        return;
       }
-      const user = JSON.parse(storageUser) as AxiosResponse
-      return user.data
+      const user = JSON.parse(storageUser) as AxiosResponse;
+      return user.data;
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
-  const [user, setUser] = useState<UserInterface | undefined>(getUserFromStorage())
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate() // redirect to other components
-  const location = useLocation() // react router hook
-
+  const [user, setUser] = useState<UserInterface | undefined>(
+    getUserFromStorage()
+  );
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // redirect to other components
+  const location = useLocation(); // react router hook
 
   const signOut = () => {
-    localStorage.removeItem('user')
-    setUser(undefined)
-  }
+    localStorage.removeItem("user");
+    setUser(undefined);
+  };
 
   const updateUser = async (user: UserInterface) => {
-    localStorage.setItem('user', JSON.stringify(user))
-    setUser(user)
-  }
+    localStorage.setItem("user", JSON.stringify(user));
+    setUser(user);
+  };
 
   useEffect(() => {
-    console.log(user)
-    console.log(location.pathname)
-    setLoading(true)
+    console.log(user);
+    console.log(location.pathname);
+    setLoading(true);
     if (user) {
-      setLoading(false)
-      if (location.pathname === '/') {
-        navigate('/feed')
+      setLoading(false);
+      if (location.pathname === "/") {
+        navigate("/feed");
       } else {
-        navigate(location.pathname)
+        navigate(location.pathname);
       }
-      return
+      return;
     }
-    if (location.pathname !== '/login' && location.pathname !== '/register') {
-        if (process.env.NODE_ENV === 'development') {
-            fetch(userInfoUrl, { credentials: 'include' })
-            .then(async res => {
-              if (res.status !== 200) {
-                signOut()
-                navigate('/register')
-                return
-              }
-              const data = await res.json()
-              setUser(data)
-              localStorage.setItem("user", JSON.stringify(data))
-            }).catch(err => {
-              console.log(err)
-              signOut()
-            }).finally(() => {
-              setLoading(false)
-            })
-    }}
-  }, [user]) 
+    if (location.pathname !== "/login" && location.pathname !== "/register") {
+      fetch(userInfoUrl, { credentials: "include" })
+        .then(async (res) => {
+          if (res.status !== 200) {
+            signOut();
+            navigate("/register");
+            return;
+          }
+          const data = await res.json();
+          setUser(data);
+          localStorage.setItem("user", JSON.stringify(data));
+        })
+        .catch((err) => {
+          console.log(err);
+          signOut();
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [user]);
 
-//   useEffect(() => {
-//     if (loading) return
-//     if (user?.username === '' && location.pathname !== '/login') {
-//       console.log('gets in if ************')
-//       // signOut()
-//     }
-//   }, [location, loading, user])
+  //   useEffect(() => {
+  //     if (loading) return
+  //     if (user?.username === '' && location.pathname !== '/login') {
+  //       console.log('gets in if ************')
+  //       // signOut()
+  //     }
+  //   }, [location, loading, user])
 
   return (
     <UserContext.Provider value={{ user, signOut, updateUser }}>
       {children}
     </UserContext.Provider>
-  )
-}
+  );
+};
 
-export default UserProvider
-
+export default UserProvider;
 
 // export const ReduceContext = createContext<UserInterface|undefined|string>(undefined)
 
@@ -121,7 +123,7 @@ export default UserProvider
 //           return 'login'
 //       default:
 //           return state
-//   }   
+//   }
 // }
 
 // <ReduceContext.Provider value={state}>

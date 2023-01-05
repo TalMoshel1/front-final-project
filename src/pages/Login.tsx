@@ -26,7 +26,6 @@ function Login({ className }: { className?: string }) {
   const userInfoUrl = `${process.env.REACT_APP_API}/api/user-info`;
 
   function login() {
-    if (process.env.NODE_ENV==='development') {
         Axios.post(
             `${process.env.REACT_APP_API}/api/login`,
             {
@@ -46,27 +45,7 @@ function Login({ className }: { className?: string }) {
                 setErrors([err.response.data[0]]);
               }
             });
-    } else {
-        Axios.post(
-            `${process.env.REACT_APP_API}/api/loginNoAuth`,
-            {
-              username: usernameRef.current?.value || "",
-              password: passwordRef.current?.value || "",
-            },
-            { withCredentials: true }
-          ).then((res)=>{
-            userContext.updateUser(res)
-          }).then(()=>{
-              navigate("/feed");
-            })
-            .catch((err) => {
-              if (Array.isArray(err.response.data[0])) {
-                setErrors(err.response.data[0]);
-              } else {
-                setErrors([err.response.data[0]]);
-              }
-            });
-    }
+    
   }
 
   return (

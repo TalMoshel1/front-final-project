@@ -22,7 +22,6 @@ function Registration({ className }: { className?: string }) {
   const userContext = useContext(UserContext);
 
   function register() {
-    if (process.env.NODE_ENV === "production") {
       Axios.post(`${process.env.REACT_APP_API}/api/register`, {
         username: usernameRef.current?.value,
         password: passwordRef.current?.value,
@@ -53,31 +52,8 @@ function Registration({ className }: { className?: string }) {
           console.log(err);
           setErrors(err.response.data);
         });
-    } else {
-      Axios.post(`${process.env.REACT_APP_API}/api/register`, {
-        username: usernameRef.current?.value,
-        password: passwordRef.current?.value,
-        fullname: fullnameRef.current?.value,
-        email: numberOrEmailRef.current?.value,
-      })
-        .then((res) => {
-          return Axios.post(
-            `${process.env.REACT_APP_API}/api/login`,
-            {
-              username: usernameRef.current?.value,
-              password: passwordRef.current?.value,
-            },
-            { withCredentials: true }
-          );
-        }).then((res)=>{
-            sendCookie(userContext)
-        })
-        .catch((err) => {
-          console.log(err);
-          setErrors(err.response.data);
-        });
-    }
-  }
+    } 
+  
 
   useEffect(() => {}, [errors]);
   return (
